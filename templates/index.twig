@@ -1,0 +1,19 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h3>Welcome to the EasyBib Discover Client!</h3>
+    <p>
+        We would like to use your information in order to integrate with your friends,
+        use your personal information for nefarious purposes, and to make your life better somehow.
+    </p>
+    <p>
+        With using OAuth2 <strong>AuthorizationGrant</strong> method for authentication you can request authorization for the client with the links below.
+    </p>
+    <ul>
+        {% for scope, description in scopes %}
+            <li>
+                [{{ scope }}] Authorize: {{ description }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
