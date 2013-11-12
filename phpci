@@ -3,6 +3,9 @@
 echo './vendor/bin/phpcs --standard=psr2 ./src'
 ./vendor/bin/phpcs --standard=psr2 ./src
 
+echo './vendor/bin/phpcs --standard=psr2 ./tests'
+./vendor/bin/phpcs --standard=psr2 ./tests
+
 echo './vendor/bin/phpmd src/ text codesize,controversial,design,naming,unusedcode'
 ./vendor/bin/phpmd src/ text codesize,controversial,design,naming,unusedcode
 

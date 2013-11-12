@@ -32,4 +32,3 @@ class AppTest extends WebTestCase
         return require __DIR__ . '/../../../bootstrap.php';
     }
 }
- 
