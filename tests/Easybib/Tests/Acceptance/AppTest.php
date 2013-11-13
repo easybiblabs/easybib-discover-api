@@ -78,6 +78,28 @@ class AppTest extends WebTestCase
         $this->app['oauth.config'];
     }
 
+    public function testAuthorizedRedirectActionExists()
+    {
+        $authorizeRedirectUrl = $this->app['url_generator']->generate('authorize_redirect');
+        $client = $this->createClient();
+        $client->request('GET', $authorizeRedirectUrl);
+
+        $this->assertNotEquals(
+            404,
+            $client->getResponse()->getStatusCode(),
+            "Action $authorizeRedirectUrl is not defined."
+        );
+    }
+
+    public function testWeSeePageDeniedIfUserDeniedAccessToClient()
+    {
+        $authorizeRedirectUrl = $this->app['url_generator']->generate('authorize_redirect');
+        $client = $this->createClient();
+        $client->request('GET', $authorizeRedirectUrl);
+
+        $this->assertContains('<h3>Authorization Failed!</h3>', $client->getResponse()->getContent());
+    }
+
     /**
      * Creates the application.
      *

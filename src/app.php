@@ -5,11 +5,11 @@ use Silex\Application;
 $app = new Application();
 
 $app['appRootPath'] = __DIR__ . '/../';
-
+$app->register(new \Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(
     new \Silex\Provider\TwigServiceProvider(),
     [
-        'twig.path'    => array(__DIR__.'/../templates'),
+        'twig.path' => array(__DIR__ . '/../templates'),
     ]
 );
 $app->register(new \Nicl\Silex\MarkdownServiceProvider());
@@ -36,17 +36,33 @@ $app['oauth.config'] = $app->share(
 );
 
 /** index */
-$app->get('/', function () use ($app) {
+$app->get(
+    '/',
+    function () use ($app) {
 
-    return $app['twig']->render(
-        'index.twig',
-        [
-            'scopes'   => $app['scopes'],
-            'clientId' => $app['oauth.config']['client.id'],
-            'readme'   => file_get_contents(__DIR__. '/../README.md'),
-        ]
-    );
-})->bind('index');
+        return $app['twig']->render(
+            'index.twig',
+            [
+                'scopes'   => $app['scopes'],
+                'clientId' => $app['oauth.config']['client.id'],
+                'readme'   => file_get_contents(__DIR__ . '/../README.md'),
+            ]
+        );
+    }
+)->bind('index');
+
+$app->get(
+    '/authorized',
+    function (Application $app) {
+
+        // the user denied the authorization request
+        if (!$code = $app['request']->get('code')) {
+            return $app['twig']->render('denied.twig');
+        }
+
+        return $app->redirect($app['url_generator']->generate('index'));
+    }
+)->bind('authorize_redirect');
 
 /** Is page reachable */
 $app->get(
@@ -62,7 +78,7 @@ $app->error(
         return $app['twig']->render(
             (404 == $code) ? '404.twig' : '500.twig',
             [
-                'code' => $code,
+                'code'    => $code,
                 'message' => $e->getMessage()
             ]
         );

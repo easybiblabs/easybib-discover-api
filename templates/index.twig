@@ -26,15 +26,35 @@
     <p>
         To start, we created some scopes to restrict access to the resources.
     </p>
+
+    <div class="row">
     {% for scope, description in scopes %}
-    <h4>{{ scope }} <small>{{ description }}</small></h4>
-    <p>
-        <div class="well well-sm">
-            Try accessing data with the {{ scope }} scope: <a href="http://data.easybib.com/oauth/authorize?response_type=code&client_id={{ clientId }}&scope={{ scope }}">
-                http://data.easybib.com/oauth/authorize?response_type=code&client_id=clientId&scope={{ scope }}
-            </a>
+        <div class="col-md-3">
+            <div class="well well-sm">
+                <p>Click to start granting this client access for {{ description }}</p>
+                <p class="text-center">
+                    <a class="btn btn-primary btn-lg active center-text" role="button" href="http://data.easybib.com/oauth/authorize?response_type=code&client_id={{ clientId }}&scope={{ scope }}">{{ scope }}</a>
+                </p>
+            </div>
         </div>
     {% endfor %}
+    </div>
+
+    <h3>What happens here</h3>
+    <ol>
+        <li>
+            When you click on one of the scope links, the authorization server checks the client credentials and if it is registered and is allowed to access your data. The authorization server also needs you to be logged in to connect your user account on EasyBib to the client.
+        </li>
+        <li>
+            If you clicked on the <strong>Yes, I Authorize This Request</strong> button the authorization server sends your browser with
+            a query parameter <code>code</code> back to this client application.
+        </li>
+        <li>
+            Behind the scene this client then queries the authorization server for an <code>access_token</code> and a <code>refresh_token</code>. If both tokens could be retrieved the browser will be send back here.
+        </li>
+    </ol>
+    <p>
+        See you right back when the authorization server sends your browser back to this client ready for the next step.
     </p>
 
     <div class="page-header">
