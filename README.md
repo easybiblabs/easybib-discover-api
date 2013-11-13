@@ -12,6 +12,7 @@ You can also try it by [Going directly to https://discover.data.easybib.com/](ht
 * Go into project-dir: `cd discover`
 * Run `./composer.phar update` to install dependencies
 * Run `./phpci` to check that everything works
+* Create config and add your client credentials `cp config/oauth.php.dist config/oauth.php`
 * Run `php -S localhost:9000 -t www/` and open the app in your browser: [http://localhost:9000/](http://localhost:9000/)
 
 ### Helpful links

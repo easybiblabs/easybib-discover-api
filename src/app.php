@@ -4,6 +4,8 @@ use Silex\Application;
 
 $app = new Application();
 
+$app['appRootPath'] = __DIR__ . '/../';
+
 $app->register(
     new \Silex\Provider\TwigServiceProvider(),
     [
@@ -23,6 +25,16 @@ $app['scopes'] = $app->share(
     }
 );
 
+$app['oauth.config.file'] = $app['appRootPath'] . 'config/oauth.php';
+$app['oauth.config'] = $app->share(
+    function () use ($app) {
+        if (file_exists($app['oauth.config.file'])) {
+            return require $app['oauth.config.file'];
+        }
+        throw new \Exception('Configuration file config/oauth.php is missing.');
+    }
+);
+
 /** index */
 $app->get('/', function () use ($app) {
 
@@ -30,7 +42,7 @@ $app->get('/', function () use ($app) {
         'index.twig',
         [
             'scopes'   => $app['scopes'],
-            'clientId' => 'todo',
+            'clientId' => $app['oauth.config']['client.id'],
             'readme'   => file_get_contents(__DIR__. '/../README.md'),
         ]
     );

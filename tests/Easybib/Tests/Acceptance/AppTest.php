@@ -12,6 +12,12 @@ use Symfony\Component\HttpKernel\HttpKernel;
 class AppTest extends WebTestCase
 {
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->app['oauth.config.file'] = __DIR__ . '/oauthConfig.php';
+    }
+
     public function testAppIsReachable()
     {
         $client = $this->createClient();
@@ -55,6 +61,21 @@ class AppTest extends WebTestCase
             $this->assertContains($scope, $client->getResponse()->getContent());
             $this->assertContains($description, $client->getResponse()->getContent());
         }
+    }
+
+    public function testAppRootPathIsSet()
+    {
+        $this->assertNotEmpty($this->app['appRootPath']);
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Configuration file config/oauth.php is missing.
+     */
+    public function testOAuthConfigFileIsMissing()
+    {
+        $this->app['oauth.config.file'] = __DIR__ . '/oauthConfig-notExisting.php';
+        $this->app['oauth.config'];
     }
 
     /**
