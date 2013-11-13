@@ -10,14 +10,15 @@ $app->register(
         'twig.path'    => array(__DIR__.'/../templates'),
     ]
 );
+$app->register(new \Nicl\Silex\MarkdownServiceProvider());
 
 $app['scopes'] = $app->share(
     function () {
         return [
-            'USER_READ'         => "read-only access users profile data",
-            'USER_READ_WRITE'   => "read and write access users profile data",
-            'DATA_READ'         => "read-only access to users projects, citations, comments",
-            'DATA_READ_WRITE'   => "read and write access to users projects, citations, comments",
+            'USER_READ'       => "read-only access users profile data",
+            'USER_READ_WRITE' => "read and write access users profile data",
+            'DATA_READ'       => "read-only access to users projects, citations, comments",
+            'DATA_READ_WRITE' => "read and write access to users projects, citations, comments",
         ];
     }
 );
@@ -28,7 +29,9 @@ $app->get('/', function () use ($app) {
     return $app['twig']->render(
         'index.twig',
         [
-            'scopes' => $app['scopes'],
+            'scopes'   => $app['scopes'],
+            'clientId' => 'todo',
+            'readme'   => file_get_contents(__DIR__. '/../README.md'),
         ]
     );
 })->bind('index');
@@ -53,6 +56,5 @@ $app->error(
         );
     }
 );
-
 
 return $app;

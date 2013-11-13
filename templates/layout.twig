@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title '' %} - @ EasyBib</title>
+    <title>{% block title '' %} EasyBib</title>
     <link rel="shortcut icon" href="{{ app.request.basepath }}/favicon.ico" />
-    <link href="{{ app.request.basepath }}/css/bootstrap_2_2_2.min.css" media="screen" rel="stylesheet" type="text/css" >
+    <link href="{{ app.request.basepath }}/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css" >
+    <link href="{{ app.request.basepath }}/css/bootstrap-theme.min.css" media="screen" rel="stylesheet" type="text/css" >
     <link href="{{ app.request.basepath }}/css/discover.css" media="screen, projection" rel="stylesheet" type="text/css" >
 </head>
 <body>
-<div class="navbar">
-    <div class="navbar-inner">
-        <a class="brand" href="{{ app.request.baseUrl }}"><img src="http://cdn-edge2.easybib.com/images/easybib_logo_small.gif"/></a>
+<nav class="navbar navbar-default" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <a class="navbar-brand" href="{{ app.request.baseUrl }}"><img src="http://cdn-edge2.easybib.com/images/easybib_logo_small.gif"/></a>
     </div>
-</div>
+</nav>
 <div class="container">
     {% block content %}{% endblock %}
 </div>

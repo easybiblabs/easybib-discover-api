@@ -21,13 +21,20 @@ class AppTest extends WebTestCase
         $this->assertContains('pong', $client->getResponse()->getContent());
     }
 
+    public function testStatusIsOK()
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/');
+
+        $this->assertTrue($client->getResponse()->isOk(), "Status code is ".$client->getResponse()->getStatusCode());
+    }
+
     public function testISeeABeautifulView()
     {
         $client = $this->createClient();
         $client->request('GET', '/');
 
-        $this->assertTrue($client->getResponse()->isOk());
-        $this->assertContains('bootstrap_2_2_2.min.css', $client->getResponse()->getContent());
+        $this->assertContains('bootstrap.min.css', $client->getResponse()->getContent());
         $this->assertContains('discover.css', $client->getResponse()->getContent());
     }
 
@@ -36,25 +43,14 @@ class AppTest extends WebTestCase
         $client = $this->createClient();
         $client->request('GET', '/');
 
-        $this->assertTrue($client->getResponse()->isOk());
-        $this->assertContains('<h3>Welcome to the EasyBib Discover Client!</h3>', $client->getResponse()->getContent());
+        $this->assertContains('Welcome to the EasyBib Demo Client!', $client->getResponse()->getContent());
     }
 
-    public function testISeeAListOnTheMainPage()
+    public function testTheTheMainPageContainsScopes()
     {
         $client = $this->createClient();
         $client->request('GET', '/');
 
-        $this->assertTrue($client->getResponse()->isOk());
-        $this->assertContains('<ul>', $client->getResponse()->getContent());
-    }
-
-    public function testTheListOnTheMainPageContainsTheScopes()
-    {
-        $client = $this->createClient();
-        $client->request('GET', '/');
-
-        $this->assertTrue($client->getResponse()->isOk());
         foreach ($this->app['scopes'] as $scope => $description) {
             $this->assertContains($scope, $client->getResponse()->getContent());
             $this->assertContains($description, $client->getResponse()->getContent());
