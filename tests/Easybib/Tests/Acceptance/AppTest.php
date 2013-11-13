@@ -15,6 +15,7 @@ class AppTest extends WebTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->app['session.test'] = true;
         $this->app['oauth.config.file'] = __DIR__ . '/oauthConfig.php';
     }
 
@@ -107,7 +108,6 @@ class AppTest extends WebTestCase
 
     public function testRequestingAccessTokenWithAuthorizationCode()
     {
-        $this->app['session.test'] = true;
         $this->app['client'] = new \Easybib\Tests\Acceptance\ClientMock();
 
         $authorizeRedirectUrl = $this->app['url_generator']->generate('authorize_redirect');
@@ -115,9 +115,7 @@ class AppTest extends WebTestCase
         $client = $this->createClient();
         $client->request('GET', $authorizeRedirectUrl, ['code'=>'123']);
 
-        $this->assertNotEmpty($this->app['session']->get('access_token'));
-        $this->assertNotEmpty($this->app['session']->get('refresh_token'));
-        $this->assertNotEmpty($this->app['session']->get('scope'));
+        $this->assertNotEmpty($this->app['session']->get('token'));
     }
 
 
