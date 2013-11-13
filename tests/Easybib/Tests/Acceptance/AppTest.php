@@ -100,6 +100,26 @@ class AppTest extends WebTestCase
         $this->assertContains('<h3>Authorization Failed!</h3>', $client->getResponse()->getContent());
     }
 
+    public function testWeHaveAHTTPClient()
+    {
+        $this->app['http.client'];
+    }
+
+    public function testRequestingAccessTokenWithAuthorizationCode()
+    {
+        $this->app['session.test'] = true;
+        $this->app['client'] = new \Easybib\Tests\Acceptance\ClientMock();
+
+        $authorizeRedirectUrl = $this->app['url_generator']->generate('authorize_redirect');
+
+        $client = $this->createClient();
+        $client->request('GET', $authorizeRedirectUrl, ['code'=>'123']);
+
+        $this->assertNotEmpty($this->app['session']->get('access_token'));
+        $this->assertNotEmpty($this->app['session']->get('refresh_token'));
+        $this->assertNotEmpty($this->app['session']->get('scope'));
+    }
+
     /**
      * Creates the application.
      *
