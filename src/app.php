@@ -75,6 +75,7 @@ $app->get(
                 'scopes'   => $app['scopes'],
                 'clientId' => $app['oauth.config']['client.id'],
                 'readme'   => file_get_contents(__DIR__ . '/../README.md'),
+                'token'    => $app['session']->get('token', null),
             ]
         );
     }
@@ -89,20 +90,25 @@ $app->get(
             return $app['twig']->render('denied.twig');
         }
 
-        // request an access_token
         /** @var \EasyBib\Service\Client */
         $client = $app['client'];
 
+        // request an access_token
         $token = $client->getAccessToken($code);
 
-        $app['session']->set('access_token', $token['access_token']);
-        $app['session']->set('refresh_token', $token['refresh_token']);
-        $app['session']->set('scope', $token['scope']);
-
+        $token['expires_in'] += time();
+        $app['session']->set('token', $token);
 
         return $app->redirect($app['url_generator']->generate('index'));
     }
 )->bind('authorize_redirect');
+
+$app->get(
+    '/discover',
+    function (Application $app) {
+
+    }
+)->bind('discover');
 
 /** Is page reachable */
 $app->get(

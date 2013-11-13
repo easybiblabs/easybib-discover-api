@@ -120,6 +120,8 @@ class AppTest extends WebTestCase
         $this->assertNotEmpty($this->app['session']->get('scope'));
     }
 
+
+
     /**
      * Creates the application.
      *
