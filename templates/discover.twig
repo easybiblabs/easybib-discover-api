@@ -1,0 +1,13 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Welcome to the EasyBib Demo Client! <small>Discover our hypermedia API</small></h1>
+    </div>
+    {{ block('accessToken') }}
+
+{% endblock %}
+
+{% block accessToken %}
+<code><pre>{{ token|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre></code>
+{% endblock %}

@@ -1,6 +1,7 @@
 <?php
 
 use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
 
 $app = new Application();
 
@@ -75,7 +76,7 @@ $app->get(
                 'scopes'   => $app['scopes'],
                 'clientId' => $app['oauth.config']['client.id'],
                 'readme'   => file_get_contents(__DIR__ . '/../README.md'),
-                'token'    => $app['session']->get('token', null),
+                'token'    => $app['session']->get('token'),
             ]
         );
     }
@@ -96,7 +97,7 @@ $app->get(
         // request an access_token
         $token = $client->getAccessToken($code);
 
-        $token['expires_in'] += time();
+        $token['expires_at'] = $token['expires_in'] + time();
         $app['session']->set('token', $token);
 
         return $app->redirect($app['url_generator']->generate('index'));
@@ -107,8 +108,25 @@ $app->get(
     '/discover',
     function (Application $app) {
 
+        return $app['twig']->render(
+            'discover.twig',
+            [
+                'token' => $app['session']->get('token'),
+            ]
+        );
     }
-)->bind('discover');
+)
+->bind('discover')
+->before(
+    function (Request $request, Application $app) {
+        $hasValidToken = function ($token) {
+            return isset($token['expires_at']) && $token['expires_at'] > time();
+        };
+        if ($hasValidToken($app['session']->get('token')) == false) {
+            return $app->redirect($app['url_generator']->generate('index'));
+        }
+    }
+);
 
 /** Is page reachable */
 $app->get(

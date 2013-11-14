@@ -106,6 +106,11 @@ class AppTest extends WebTestCase
         $this->app['http.client'];
     }
 
+    public function testClientIsInstanceExists()
+    {
+        $this->assertInstanceOf(\EasyBib\Service\Client::$CLASS, $this->app['client']);
+    }
+
     public function testRequestingAccessTokenWithAuthorizationCode()
     {
         $this->app['client'] = new \Easybib\Tests\Acceptance\ClientMock();
@@ -116,6 +121,30 @@ class AppTest extends WebTestCase
         $client->request('GET', $authorizeRedirectUrl, ['code'=>'123']);
 
         $this->assertNotEmpty($this->app['session']->get('token'));
+    }
+
+    public function testRedirectIfTokenIsExpired()
+    {
+        $this->app['session']->set('token', ['expires_at' => time()-10]);
+
+        $discoverUrl = $this->app['url_generator']->generate('discover');
+
+        $client = $this->createClient();
+        $client->request('GET', $discoverUrl);
+
+        $this->assertContains('Redirecting to /', $client->getResponse()->getContent());
+    }
+
+    public function testDiscoverPageShowsAccessToken()
+    {
+        $this->app['session']->set('token', ['expires_at' => time()+10, 'access_token' => 'tokenABC']);
+
+        $discoverUrl = $this->app['url_generator']->generate('discover');
+
+        $client = $this->createClient();
+        $client->request('GET', $discoverUrl, ['rel' => 'project']);
+
+        $this->assertContains('tokenABC', $client->getResponse()->getContent());
     }
 
 

@@ -3,6 +3,8 @@ namespace EasyBib\Service;
 
 class Client
 {
+    public static $CLASS = __CLASS__;
+
     /** @var array */
     private $config;
     /** @var \Guzzle\Http\Client */

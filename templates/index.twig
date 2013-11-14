@@ -35,7 +35,7 @@
     <div class="page-header"><h2>Step 1</h2></div>
     <h3>This is your client application!</h3>
     <p>
-        So we can say you registered at EasyBib, registered a client application and this application you are seeing here is your application. Now you want users of your site to allow your application to access their data on EasyBib for them for a usecase.
+        So we can say you registered at EasyBib and are already logged in, registered a client application and this application you are seeing here is your application. Now you want users of your site to allow your application to access their data on EasyBib for them for a usecase.
     </p>
     <h3>Which scope do you need the user to accept?</h3>
     <p>
@@ -79,8 +79,8 @@
 
 {% block step_2 %}
     <div class="page-header"><h2>Step 2</h2></div>
-    <h3>You have an access_token:</h3>
-    <pre>{{ token|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+    <h3>You have successful created an access_token:</h3>
+    <code><pre>{{ token|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre></code>
     <p>
         With this access token you can now start making requests to the resource server.
     </p>
@@ -88,7 +88,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="well well-sm">
-                <p>Start discovering</p>
+                <p>Start discovering EasyBibs hypermedia API</p>
                 <p class="text-center">
                     <a class="btn btn-primary btn-lg active center-text"
                        role="button" href="{{ app.url_generator.generate('discover', {rel: discover_start}) }}">

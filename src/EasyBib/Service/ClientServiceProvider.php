@@ -20,8 +20,8 @@ class ClientServiceProvider implements \Silex\ServiceProviderInterface
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      * @param Application $app
+     * @SuppressWarnings("unused")
      */
     public function boot(Application $app)
     {
