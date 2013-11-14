@@ -108,10 +108,24 @@ $app->get(
     '/discover',
     function (Application $app) {
 
+        $apiEntryPoint = urlencode('https://data.easybib.com/projects/');
+
+        $resourceResponse = $app['client']->requestResource(
+            $app['request']->get('url', $apiEntryPoint),
+            $app['session']->get('token')
+        );
+
+        $resourceData = $app['client']->filterHypermediaReferences(
+            $resourceResponse['resourceData'],
+            $app['url_generator']->generate('discover', ['url' => 'replaceURL'], true)
+        );
+
         return $app['twig']->render(
             'discover.twig',
             [
-                'token' => $app['session']->get('token'),
+                'resourceData'    => $resourceData,
+                'responseMessage' => $resourceResponse['responseMessage'],
+                'token'           => $app['session']->get('token'),
             ]
         );
     }
@@ -123,6 +137,7 @@ $app->get(
             return isset($token['expires_at']) && $token['expires_at'] > time();
         };
         if ($hasValidToken($app['session']->get('token')) == false) {
+            $app['session']->remove('token');
             return $app->redirect($app['url_generator']->generate('index'));
         }
     }

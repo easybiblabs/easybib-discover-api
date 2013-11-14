@@ -16,6 +16,7 @@ class AppTest extends WebTestCase
     {
         parent::setUp();
         $this->app['session.test'] = true;
+        $this->app['session']->remove('token');
         $this->app['oauth.config.file'] = __DIR__ . '/oauthConfig.php';
     }
 
@@ -137,17 +138,48 @@ class AppTest extends WebTestCase
 
     public function testDiscoverPageShowsAccessToken()
     {
-        $this->app['session']->set('token', ['expires_at' => time()+10, 'access_token' => 'tokenABC']);
+        $this->app['session']->set('token', ['expires_at' => time()+10, 'access_token' => 'aaa']);
+        $this->app['client'] = new \Easybib\Tests\Acceptance\ClientMock();
 
         $discoverUrl = $this->app['url_generator']->generate('discover');
 
         $client = $this->createClient();
         $client->request('GET', $discoverUrl, ['rel' => 'project']);
 
-        $this->assertContains('tokenABC', $client->getResponse()->getContent());
+        $this->assertContains('aaa', $client->getResponse()->getContent());
+    }
+
+    public function testClientRequestResource()
+    {
+        $this->app['client'] = new \Easybib\Tests\Acceptance\ClientMock();
+        $this->app['client']->requestResource('http://localhost', ['access_token' => 'tokenABC']);
     }
 
 
+    public function testReplaceLinks()
+    {
+        $data = [
+            'data' => [
+                [
+                    'links' => [
+                        [
+                            'href' => 'url1'
+                        ]
+                    ],
+                    'data' => [],
+                ]
+            ],
+            'links' => [
+                [
+                    'href' => 'url2'
+                ]
+            ],
+        ];
+        $result = $this->app['client']->filterHypermediaReferences($data, 'replaceURL');
+
+        $this->assertEquals('<a href=url1 data-id=next>url1</a>', $result['data'][0]['links'][0]['href']);
+        $this->assertEquals('<a href=url2 data-id=next>url2</a>', $result['links'][0]['href']);
+    }
 
     /**
      * Creates the application.

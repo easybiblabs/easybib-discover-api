@@ -4,10 +4,36 @@
     <div class="page-header">
         <h1>Welcome to the EasyBib Demo Client! <small>Discover our hypermedia API</small></h1>
     </div>
+
+    <h3>The hypermedia response <small>Click around</small></h3>
+    {{ block('resourceBlock') }}
+
+    <h3>The Access Token</h3>
     {{ block('accessToken') }}
+
+    <h3>Raw Request / Response Messages</h3>
+    {{ block('messageBlock') }}
 
 {% endblock %}
 
 {% block accessToken %}
-<code><pre>{{ token|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre></code>
+<div class="well">
+    <pre>{{ token|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+</div>
+{% endblock %}
+
+{% block messageBlock %}
+<div class="well">
+    <pre>{{ responseMessage }}</pre>
+</div>
+{% endblock %}
+
+{% block resourceBlock %}
+<div class="well">
+    {% set indent = 4 %}
+    <script type="text/javascript">
+        var data = JSON.parse('{{ resourceData|json_encode(constant('JSON_UNESCAPED_SLASHES'))|replace({'\\"': '\\\\"', '<': '<\\'})|raw }}');
+        document.write('<pre style="font-size:8pt;">' + JSON.stringify(data, null, {{ indent }}) + '</pre>');
+    </script>
+</div>
 {% endblock %}
