@@ -2,20 +2,45 @@
 <html>
 <head>
     <title>{% block title '' %} EasyBib</title>
-    <link rel="shortcut icon" href="{{ app.request.basepath }}/favicon.ico" />
-    <link href="{{ app.request.basepath }}/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css" >
-    <link href="{{ app.request.basepath }}/css/bootstrap-theme.min.css" media="screen" rel="stylesheet" type="text/css" >
-    <link href="{{ app.request.basepath }}/css/discover.css" media="screen, projection" rel="stylesheet" type="text/css" >
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css" >
+    <link href="/css/bootstrap-theme.min.css" media="screen" rel="stylesheet" type="text/css" >
+    <link href="/css/discover.css" media="screen, projection" rel="stylesheet" type="text/css" >
 </head>
 <body>
-<nav class="navbar navbar-default" role="navigation">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-        <a class="navbar-brand" href="{{ app.request.baseUrl }}"><img src="http://cdn-edge2.easybib.com/images/easybib_logo_small.gif"/></a>
-    </div>
-</nav>
+
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{{ app.url_generator.generate('index') }}">
+                <img class="brand" src="http://cdn-edge2.easybib.com/images/easybib_logo_small.gif"/>
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="{{ (app.request.pathInfo == app.url_generator.generate('index')) ? 'active' : '' }}">
+                    <a href="{{ app.url_generator.generate('index') }}">Start</a>
+                </li>
+                <li class="{{ (app.request.pathInfo == app.url_generator.generate('discover')) ? 'active' : '' }}">
+                    <a href="{{ app.url_generator.generate('discover') }}">Discover</a>
+                </li>
+                <li class="{{ (app.request.pathInfo == app.url_generator.generate('readme')) ? 'active' : '' }}">
+                    <a href="{{ app.url_generator.generate('readme') }}">README</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </nav>
+{% endblock %}
+
 <div class="container">
+
     {% block content %}{% endblock %}
 </div>
 </body>
 </html>
+

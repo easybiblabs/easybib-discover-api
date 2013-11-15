@@ -22,22 +22,24 @@ class Client
      * @param string $code
      * @return array
      */
-    public function getAccessToken($code)
+    public function getAccessToken($code, $redirectUri)
     {
         /** @var \Guzzle\Http\Message\Request $requestAccessToken */
         $requestAccessToken = $this->httpClient->post(
-            '/oauth/token',
+            $this->config['server.token'],
             null,
             [
                 'code' => $code,
-                'grant_type' => 'authorization_code',
-                'client_id' => $this->config['client.id'],
+                'grant_type'    => 'authorization_code',
+                'client_id'     => $this->config['client.id'],
                 'client_secret' => $this->config['client.secret'],
-                'redirect_uri' => 'http://localhost:9002/authorized',
+                'redirect_uri'  => $redirectUri,
             ]
         );
 
         $token = $requestAccessToken->send()->json();
+
+        $token = $this->setTokenExpiresAt($token);
 
         return $token;
     }
@@ -48,14 +50,14 @@ class Client
      *
      * @return array
      */
-    public function requestResource($encodedUrl, array $token)
+    public function requestResource(array $token, $encodedUrl = null)
     {
-        $url = urldecode($encodedUrl);
-
         $headers = [
             'Authorization' => sprintf('Bearer %s', $token['access_token']),
             'Accept'        => 'application/vnd.com.easybib.data+json',
         ];
+
+        $url = $this->getResourceUrl($token['scope'], $encodedUrl);
 
         ob_start();
         $request = $this->httpClient->get($url, $headers, ['debug' => true]);
@@ -89,10 +91,38 @@ class Client
                     str_replace('replaceURL', urlencode($resourceData['href']), $urlTemplate),
                     $resourceData['href']
                 );
-            } else {
-                $resourceData[$key] = $this->filterHypermediaReferences($resourceData[$key], $urlTemplate);
+                continue;
             }
+
+            $resourceData[$key] = $this->filterHypermediaReferences($resourceData[$key], $urlTemplate);
+
         }
         return $resourceData;
+    }
+
+    /**
+     * @param string $scope
+     * @param string $encodedUrl
+     */
+    private function getResourceUrl($scope, $encodedUrl = null)
+    {
+        if ($encodedUrl != null) {
+            return urldecode($encodedUrl);
+        }
+        if (stripos($scope, 'data') !== false) {
+            return urldecode($this->config['entrypoint.data']);
+        }
+        return urldecode($this->config['entrypoint.user']);
+    }
+
+    /**
+     * @param $token
+     *
+     * @return mixed
+     */
+    private function setTokenExpiresAt($token)
+    {
+        $token['expires_at'] = $token['expires_in'] + time();
+        return $token;
     }
 }

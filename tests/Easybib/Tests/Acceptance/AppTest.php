@@ -59,9 +59,9 @@ class AppTest extends WebTestCase
         $client = $this->createClient();
         $client->request('GET', '/');
 
-        foreach ($this->app['scopes'] as $scope => $description) {
-            $this->assertContains($scope, $client->getResponse()->getContent());
-            $this->assertContains($description, $client->getResponse()->getContent());
+        foreach ($this->app['scopes'] as $scope) {
+            $this->assertContains($scope['title'], $client->getResponse()->getContent());
+            $this->assertContains($scope['desc'], $client->getResponse()->getContent());
         }
     }
 
@@ -152,7 +152,7 @@ class AppTest extends WebTestCase
     public function testClientRequestResource()
     {
         $this->app['client'] = new \Easybib\Tests\Acceptance\ClientMock();
-        $this->app['client']->requestResource('http://localhost', ['access_token' => 'tokenABC']);
+        $this->app['client']->requestResource(['access_token' => 'tokenABC'], 'http://localhost');
     }
 
 

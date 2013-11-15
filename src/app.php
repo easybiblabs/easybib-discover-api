@@ -26,7 +26,7 @@ $app->register(
     new \Silex\Provider\SessionServiceProvider(),
     [
         'session.storage.options' => [
-            'cookie_lifetime' => 259200000,
+            'cookie_lifetime' => 5000,
         ],
     ]
 );
@@ -38,10 +38,21 @@ $app['appRootPath'] = __DIR__ . '/../';
 $app['scopes'] = $app->share(
     function () {
         return [
-            'USER_READ'       => "read-only access users profile data",
-            'USER_READ_WRITE' => "read and write access users profile data",
-            'DATA_READ'       => "read-only access to users projects, citations, comments",
-            'DATA_READ_WRITE' => "read and write access to users projects, citations, comments",
+            [
+                'title' => 'Grant user scope',
+                'desc'  => 'reading and writing users profile data',
+                'scope' => 'USER_READ_WRITE',
+            ],
+            [
+                'title' => 'Grant data scope',
+                'desc'  => 'reading and writing users projects, citations, comments',
+                'scope' => 'DATA_READ_WRITE',
+            ],
+            [
+                'title' => 'Grant user and data scope',
+                'desc'  => 'to users profile data, projects, citations and comments',
+                'scope' => 'USER_READ_WRITE%20DATA_READ_WRITE',
+            ],
         ];
     }
 );
@@ -69,18 +80,29 @@ $app->register(new \EasyBib\Service\ClientServiceProvider());
 $app->get(
     '/',
     function () use ($app) {
-
         return $app['twig']->render(
             'index.twig',
             [
                 'scopes'   => $app['scopes'],
+                'authUrl'  => $app['oauth.config']['server.auth'],
                 'clientId' => $app['oauth.config']['client.id'],
-                'readme'   => file_get_contents(__DIR__ . '/../README.md'),
                 'token'    => $app['session']->get('token'),
             ]
         );
     }
 )->bind('index');
+
+$app->get(
+    '/readme',
+    function () use ($app) {
+        return $app['twig']->render(
+            'readme.twig',
+            [
+                'readme'   => file_get_contents(__DIR__ . '/../README.md'),
+            ]
+        );
+    }
+)->bind('readme');
 
 $app->get(
     '/authorized',
@@ -91,13 +113,10 @@ $app->get(
             return $app['twig']->render('denied.twig');
         }
 
-        /** @var \EasyBib\Service\Client */
-        $client = $app['client'];
+        // request an access_token with the authorization code
+        $redirectUri = $app['url_generator']->generate('authorize_redirect', [], true);
+        $token = $app['client']->getAccessToken($code, $redirectUri);
 
-        // request an access_token
-        $token = $client->getAccessToken($code);
-
-        $token['expires_at'] = $token['expires_in'] + time();
         $app['session']->set('token', $token);
 
         return $app->redirect($app['url_generator']->generate('index'));
@@ -108,11 +127,9 @@ $app->get(
     '/discover',
     function (Application $app) {
 
-        $apiEntryPoint = urlencode('https://data.easybib.com/projects/');
-
         $resourceResponse = $app['client']->requestResource(
-            $app['request']->get('url', $apiEntryPoint),
-            $app['session']->get('token')
+            $app['session']->get('token'),
+            $app['request']->get('url')
         );
 
         $resourceData = $app['client']->filterHypermediaReferences(

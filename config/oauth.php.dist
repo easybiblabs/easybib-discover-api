@@ -1,7 +1,10 @@
 <?php
 
 return [
-  'server.auth'   => 'http://data.easybib.com/oauth/authorize',
-  'client.id'     => '',
-  'client.secret' => '',
+  'server.auth'     => 'https://data.easybib.com/oauth/authorize',
+  'server.token'    => 'https://data.easybib.com/oauth/token',
+  'entrypoint.data' => 'https://data.easybib.com/projects/',
+  'entrypoint.user' => 'https://data.easybib.com/user/',
+  'client.id'       => '',
+  'client.secret'   => '',
 ];

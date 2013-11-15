@@ -9,18 +9,18 @@ class ClientMock extends Client
     {
     }
 
-    public function getAccessToken($code)
+    public function getAccessToken($code, $redirectUri)
     {
         return [
             'access_token' => 'aaa',
             'expires_in' => 3600,
             'token_type' => 'bearer',
-            'scope' => 'USER_READ_WRITE',
+            'scope' => 'USER_READ_WRITE DATA_READ_WRITE',
             'refresh_token' => 'bbb'
         ];
     }
 
-    public function requestResource($encodedUrl, array $token)
+    public function requestResource(array $token, $encodedUrl = null)
     {
         return [
             'resourceData'    => [],
