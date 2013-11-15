@@ -9,11 +9,15 @@
   "autoload": {
     "psr-0": {
       "": "src/"
-    }
+    },
+    "classmap": ["tests/"]
   },
   "require": {
     "php": ">=5.4",
-    "silex/silex": "~1.1"
+    "silex/silex": "~1.1",
+    "twig/twig": "1.*",
+    "nicl/silex-markdown": "1.1.*",
+    "guzzle/silex-provider": "1.0.*@dev"
   },
   "require-dev": {
     "symfony/browser-kit": "2.3.*",
