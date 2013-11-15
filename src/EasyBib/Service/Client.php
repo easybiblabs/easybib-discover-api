@@ -87,7 +87,7 @@ class Client
         foreach (array_keys($resourceData) as $key) {
             if ($key === 'href') {
                 $resourceData['href'] = sprintf(
-                    '<a href=%s data-id=next>%s</a>',
+                    '<a href="%s" data-id="next">%s</a>',
                     str_replace('replaceURL', urlencode($resourceData['href']), $urlTemplate),
                     $resourceData['href']
                 );

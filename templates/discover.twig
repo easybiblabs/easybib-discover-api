@@ -30,10 +30,8 @@
 
 {% block resourceBlock %}
 <div class="well">
-    {% set indent = 4 %}
-    <script type="text/javascript">
-        var data = JSON.parse('{{ resourceData|json_encode(constant('JSON_UNESCAPED_SLASHES'))|replace({'\\"': '\\\\"', '<': '<\\'})|raw }}');
-        document.write('<pre style="font-size:8pt;">' + JSON.stringify(data, null, {{ indent }}) + '</pre>');
-    </script>
+    <pre>
+        {{ resourceData|json_encode(constant('JSON_PRETTY_PRINT'))|replace({'\\/':'/', '\\"':"'"})|raw }}
+    </pre>
 </div>
 {% endblock %}

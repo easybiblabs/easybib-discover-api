@@ -177,8 +177,8 @@ class AppTest extends WebTestCase
         ];
         $result = $this->app['client']->filterHypermediaReferences($data, 'replaceURL');
 
-        $this->assertEquals('<a href=url1 data-id=next>url1</a>', $result['data'][0]['links'][0]['href']);
-        $this->assertEquals('<a href=url2 data-id=next>url2</a>', $result['links'][0]['href']);
+        $this->assertEquals('<a href="url1" data-id="next">url1</a>', $result['data'][0]['links'][0]['href']);
+        $this->assertEquals('<a href="url2" data-id="next">url2</a>', $result['links'][0]['href']);
     }
 
     /**
