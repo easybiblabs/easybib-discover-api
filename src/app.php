@@ -81,28 +81,41 @@ $app->get(
     '/',
     function () use ($app) {
         return $app['twig']->render(
-            'index.twig',
+            'step1.twig',
             [
                 'scopes'   => $app['scopes'],
                 'authUrl'  => $app['oauth.config']['server.auth'],
                 'clientId' => $app['oauth.config']['client.id'],
+            ]
+        );
+    }
+)->bind('step1');
+
+$app->get(
+    '/step2',
+    function () use ($app) {
+
+        return $app['twig']->render(
+            'step2.twig',
+            [
+                'code'     => $app['session']->get('code'),
                 'token'    => $app['session']->get('token'),
             ]
         );
     }
-)->bind('index');
-
-$app->get(
-    '/readme',
-    function () use ($app) {
-        return $app['twig']->render(
-            'readme.twig',
-            [
-                'readme'   => file_get_contents(__DIR__ . '/../README.md'),
-            ]
-        );
-    }
-)->bind('readme');
+)
+    ->bind('step2')
+    ->before(
+        function (Request $request, Application $app) {
+            $hasValidToken = function ($token) {
+                return isset($token['expires_at']) && $token['expires_at'] > time();
+            };
+            if ($hasValidToken($app['session']->get('token')) == false) {
+                $app['session']->remove('token');
+                $app['session']->remove('code');
+            }
+        }
+    );
 
 $app->get(
     '/authorized',
@@ -118,8 +131,9 @@ $app->get(
         $token = $app['client']->getAccessToken($code, $redirectUri);
 
         $app['session']->set('token', $token);
+        $app['session']->set('code', $code); // this is only for demonstration purpose
 
-        return $app->redirect($app['url_generator']->generate('index'));
+        return $app->redirect($app['url_generator']->generate('step2'));
     }
 )->bind('authorize_redirect');
 
@@ -140,25 +154,38 @@ $app->get(
         return $app['twig']->render(
             'discover.twig',
             [
-                'resourceData'    => $resourceData,
-                'responseMessage' => $resourceResponse['responseMessage'],
-                'token'           => $app['session']->get('token'),
+                'hypermediaResponse' => $resourceData,
+                'responseMessage'    => $resourceResponse['responseMessage'],
+                'token'              => $app['session']->get('token'),
             ]
         );
     }
 )
-->bind('discover')
-->before(
-    function (Request $request, Application $app) {
-        $hasValidToken = function ($token) {
-            return isset($token['expires_at']) && $token['expires_at'] > time();
-        };
-        if ($hasValidToken($app['session']->get('token')) == false) {
-            $app['session']->remove('token');
-            return $app->redirect($app['url_generator']->generate('index'));
+    ->bind('discover')
+    ->before(
+        function (Request $request, Application $app) {
+            $hasValidToken = function ($token) {
+                return isset($token['expires_at']) && $token['expires_at'] > time();
+            };
+            if ($hasValidToken($app['session']->get('token')) == false) {
+                $app['session']->remove('token');
+                $app['session']->remove('code');
+                return $app->redirect($app['url_generator']->generate('step1'));
+            }
         }
+    );
+
+$app->get(
+    '/readme',
+    function () use ($app) {
+        return $app['twig']->render(
+            'readme.twig',
+            [
+                'readme'   => file_get_contents(__DIR__ . '/../README.md'),
+            ]
+        );
     }
-);
+)->bind('readme');
 
 /** Is page reachable */
 $app->get(

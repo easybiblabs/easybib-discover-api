@@ -17,21 +17,19 @@
 {% endblock %}
 
 {% block accessToken %}
-<div class="well">
+<div class="well display-token">
     <pre>{{ token|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
 </div>
 {% endblock %}
 
 {% block messageBlock %}
-<div class="well">
+<div class="well display-response">
     <pre>{{ responseMessage }}</pre>
 </div>
 {% endblock %}
 
 {% block resourceBlock %}
-<div class="well">
-    <pre>
-        {{ resourceData|json_encode(constant('JSON_PRETTY_PRINT'))|replace({'\\/':'/', '\\"':"'"})|raw }}
-    </pre>
+<div class="well display-hypermedia">
+    <pre>{{ hypermediaResponse|json_encode(constant('JSON_PRETTY_PRINT'))|replace({'\\/':'/', '\\"':"'"})|raw }}</pre>
 </div>
 {% endblock %}
