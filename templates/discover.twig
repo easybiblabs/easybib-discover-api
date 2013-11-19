@@ -2,16 +2,19 @@
 
 {% block content %}
     <div class="page-header">
-        <h1>Welcome to the EasyBib Demo Client! <small>Discover our hypermedia API</small></h1>
+        <h1>Discover EasyBib's hypermedia API!<small>Click around</small></h1>
     </div>
 
-    <h3>The hypermedia response <small>Click around</small></h3>
+    <div class="page-header"><h3>The hypermedia response <br/>
+            <small>for GET
+                <a href="{{ app.url_generator.generate('discover', { 'url':url }) }}">{{ url }}</a>
+            </small></h3></div>
     {{ block('resourceBlock') }}
 
-    <h3>The Access Token</h3>
+    <div class="page-header"><h3>The Access Token</h3></div>
     {{ block('accessToken') }}
 
-    <h3>Raw Request / Response Messages</h3>
+    <div class="page-header"><h3>Raw Request / Response Messages</h3></div>
     {{ block('messageBlock') }}
 
 {% endblock %}

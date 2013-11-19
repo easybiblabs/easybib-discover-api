@@ -67,7 +67,8 @@ class Client
 
         return [
             'resourceData'    => $data->json(),
-            'responseMessage' => $responseMessage
+            'responseMessage' => $responseMessage,
+            'url' => $url,
         ];
     }
 

@@ -4,8 +4,8 @@
 
 {% block content %}
     <div class="jumbotron">
-        <h1>Discover the API</h1>
-        <p>First, get an authorization code:</p>
+        <h1>Discover EasyBib's API <br /><small>Step 1: Get an authorization code</small></h1>
+        <p>Grant this client access to your data on EasyBib and get an authorization code:</p>
         <p>
             {% for scope in scopes %}
                     <a class="btn btn-primary btn-lg active center-text" role="button" href="{{ authUrl }}?response_type=code&client_id={{ clientId }}&scope={{ scope.scope }}">{{ scope.title }}</a>
@@ -14,13 +14,20 @@
     </div>
 
     <p>
-        This client was created to demonstrate how to access EasyBibs hypermedia api using the <a href="http://tools.ietf.org/html/rfc6749#section-4.1">OAuth2 Authorization Code Grant.</a>
+        This client was created to demonstrate how to access <a href="https://data.easybib.com/">EasyBib's hypermedia API</a> using the <a href="http://tools.ietf.org/html/rfc6749#section-4.1">OAuth2 Authorization Code Grant.</a>
         OAuth2 is not simple to grasp in the beginning so we will guide you through the first steps.
     </p>
     <p>For getting a working client you need three things:</p>
     <ol>
-        <li>A <strong>redirectUrl</strong> The redirect URL is the callback URL that EasyBib will return the the user to after successful authentication.</li>
-        <li>A <strong>clientID</strong> and a <strong>clientSecret</strong> which you will get when you register your first application on <a href="https://data.easybib.com/application/">https://data.easybib.com/application/</a> where you need to enter your <strong>redirectUrl</strong></li>
+        <li>
+            A <strong><code>redirect_url</code></strong> The redirect URL is the callback URL that EasyBib will return the the user to after successful authentication.
+        </li>
+        <li>
+            A <strong><code>client_id</code></strong> and
+        </li>
+        <li>
+            A <strong><code>client_secret</code></strong> which you will get when you register your first application on <a href="https://data.easybib.com/application/">https://data.easybib.com/application/</a> where you need to enter your <strong><code>redirect_url</code></strong>
+        </li>
     </ol>
 
     {{ block('step_1') }}
@@ -29,44 +36,26 @@
 
 
 {% block step_1 %}
-    <div class="page-header"><h2>Get an Authorization Code</h2></div>
-    <h3>Step A, B and C</h3>
+    <div class="page-header"><h2>Step 1: Get an authorization code</h2></div>
     <ol type="A">
         {{ block('listing1') }}
     </ol>
 
-    <h3>This is your client application, you are one of your users now!</h3>
-    <p>
-        So we can say you registered at EasyBib and are already logged in, registered a client application and this application you are seeing here is your application. Now you want users of your site to allow your application to access their data on EasyBib for them for a usecase.
-    </p>
-    <h3>Which scope do you need the user to accept?</h3>
-    <p>
-        To start, we created some scopes to restrict access to the resources.
-    </p>
-
-    <div class="row">
-        {% for scope in scopes %}
-            <div class="col-md-4">
-                <div class="well well-sm">
-                    <p>Click to start granting this client access for {{ scope.desc }}</p>
-                    <p class="text-center">
-                        <a class="btn btn-primary btn-lg active center-text" role="button" href="{{ authUrl }}?response_type=code&client_id={{ clientId }}&scope={{ scope.scope }}">{{ scope.title }}</a>
-                    </p>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+    <div class="page-header text-muted"><h2>Step 2: Exchange the authorization code for an access token</h2></div>
+    <ol type="A" class="text-muted"  start="4">
+        {{ block('listing2') }}
+    </ol>
 {% endblock %}
 
 {% block listing1 %}
     <li>
-        When you click on one of the scope links, your Browser gets send to the authorization server.
+        When you click on one of the scope links, your browser gets send to the authorization server.
     </li>
     <li>
         The authorization server checks 2 things
         <ul>
             <li>
-                the client credentials (<code>client id</code> and <code>redirect url</code>) and if it is registered and allowed to access users data with the <code>scope</code> that was requested
+                the client credentials (<code>client_id</code> and <code>redirect_url</code>) and if it is registered and allowed to access users data with the <code>scope</code> that was requested
             </li>
             <li>
                 if you are logged in (or gives you the option to do that now), to connect the your user account on EasyBib to this client
@@ -74,7 +63,15 @@
         </ul>
     </li>
     <li>
-        If you clicked on the <strong>Yes, I Authorize This Request</strong> button the authorization server sends your browser with
-        a query parameter <code>code</code> back to this client application, to step D and E.
+        If you clicked on the <strong>Yes, I Authorize This Request</strong> button the authorization server sends your browser with a query parameter <code>code</code> back to this client application, to <a href="{{ app.url_generator.generate('step2') }}">Step 2</a>.
+    </li>
+{% endblock %}
+
+{% block listing2 %}
+    <li>
+        Behind the scene this client directly requests to exchange the obtained <code>authorization code</code> for an <code>access token</code> with the authorization server.
+    </li>
+    <li>
+        The authorization server checked the user and the client and if all requirements are met and sends back the <code>authorization code</code> to the client. The client can now request resources from the resource server by presenting the <code>access token</code>.
     </li>
 {% endblock %}

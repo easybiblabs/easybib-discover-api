@@ -22,27 +22,57 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class="{{ (app.request.attributes.get('_route') == 'step1') ? 'active' : '' }}">
-                    <a href="{{ app.url_generator.generate('step1') }}">Step A,B and C - Get Authorization Code</a>
+                    <a href="{{ app.url_generator.generate('step1') }}">Step 1: Get Authorization Code</a>
+                </li>
+                <li>
+                    <p class="navbar-text" >&#62;&#62;&#62;</p>
+                    <p class="navbar-text" >&nbsp;</p>
                 </li>
                 <li class="{{ (app.request.attributes.get('_route') == 'step2') ? 'active' : '' }}">
-                    <a href="{{ app.url_generator.generate('step2') }}">Step D and E - Get Access Token</a>
+                    <a href="{{ app.url_generator.generate('step2') }}">Step 2: Get Access Token</a>
+                </li>
+                <li>
+                    <p class="navbar-text" >&#62;&#62;&#62;</p>
+                    <p class="navbar-text" >&nbsp;</p>
                 </li>
                 <li class="{{ (app.request.attributes.get('_route') == 'discover') ? 'active' : '' }}">
-                    <a href="{{ app.url_generator.generate('discover') }}">Discover</a>
+                    <a href="{{ app.url_generator.generate('discover') }}">Step 3: Discover</a>
                 </li>
                 <li class="{{ (app.request.attributes.get('_route') == 'readme') ? 'active' : '' }}">
                     <a href="{{ app.url_generator.generate('readme') }}">README</a>
                 </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>
 {% endblock %}
 
 <div class="container">
+{% block flashes %}
+    {% if app.session.flashbag.peekAll|length > 0 %}
+        <div class="row">
+            <div class="col-md-12">
+                {% for type, flashMessages in app.session.flashbag.all() %}
+                    {% for flashMessage in flashMessages %}
+                        <div class="alert alert-{{ type }}">
+                            {{ flashMessage }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock flashes %}
 {% block content %}{% endblock %}
 </div>
+<footer class="bs-footer" role="contentinfo">
+    <div class="container">
+        <p>Written and built to make your life easier by <a href="http://www.imagineeasy.com/">Imagine Easy Solutions</a></p>
+        <p>Code licensed under <a href=http://opensource.org/licenses/MIT" target="_blank">MIT</a>, documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <ul class="footer-links">
+
+        </ul>
+    </div>
+</footer>
 </body>
 </html>
 

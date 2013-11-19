@@ -107,12 +107,24 @@ $app->get(
     ->bind('step2')
     ->before(
         function (Request $request, Application $app) {
+            $hasAccessToken = function ($token) {
+                return isset($token['expires_at']);
+            };
             $hasValidToken = function ($token) {
                 return isset($token['expires_at']) && $token['expires_at'] > time();
             };
-            if ($hasValidToken($app['session']->get('token')) == false) {
+            $token = $app['session']->get('token');
+
+            if ($hasValidToken($token) == false) {
+
+                if ($hasAccessToken($token)) {
+                    $app['session']->getFlashBag()->add('warning', 'The access token has expired.');
+                }
+
                 $app['session']->remove('token');
                 $app['session']->remove('code');
+
+                $app['session']->getFlashBag()->add('warning', 'Please get an authorization code first with Step 1.');
             }
         }
     );
@@ -123,8 +135,14 @@ $app->get(
 
         if (!$code = $app['request']->get('code')) {
             // the user denied the authorization request
+            $app['session']->getFlashBag()->add('error', '');
             return $app['twig']->render('denied.twig');
         }
+
+        $app['session']->getFlashBag()->add(
+            'success',
+            sprintf('Step 1: The authentication code was send back from the server. [%s]', $app->escape($code))
+        );
 
         // request an access_token with the authorization code
         $redirectUri = $app['url_generator']->generate('authorize_redirect', [], true);
@@ -132,6 +150,12 @@ $app->get(
 
         $app['session']->set('token', $token);
         $app['session']->set('code', $code); // this is only for demonstration purpose
+
+        $app['session']->getFlashBag()->add(
+            'success',
+            'Step 2: The authentication code could be exchanged for access token'
+        );
+
 
         return $app->redirect($app['url_generator']->generate('step2'));
     }
@@ -156,6 +180,7 @@ $app->get(
             [
                 'hypermediaResponse' => $resourceData,
                 'responseMessage'    => $resourceResponse['responseMessage'],
+                'url'                => $resourceResponse['url'],
                 'token'              => $app['session']->get('token'),
             ]
         );
@@ -168,9 +193,7 @@ $app->get(
                 return isset($token['expires_at']) && $token['expires_at'] > time();
             };
             if ($hasValidToken($app['session']->get('token')) == false) {
-                $app['session']->remove('token');
-                $app['session']->remove('code');
-                return $app->redirect($app['url_generator']->generate('step1'));
+                return $app->redirect($app['url_generator']->generate('reset'));
             }
         }
     );
@@ -186,6 +209,19 @@ $app->get(
         );
     }
 )->bind('readme');
+
+$app->get(
+    '/reset',
+    function () use ($app) {
+
+        $app['session']->remove('token');
+        $app['session']->remove('code');
+
+        $app['session']->getFlashBag()->add('warning', 'Please get an authorization code first with Step 1.');
+
+        return $app->redirect($app['url_generator']->generate('step1'));
+    }
+)->bind('reset');
 
 /** Is page reachable */
 $app->get(
