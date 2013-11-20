@@ -22,3 +22,11 @@ body { padding-top: 70px; }
 .footer-links li:first-child {
     padding-left: 0;
 }
+
+.forkme {
+    position: fixed;
+    top: 0;
+    right: 0;
+    border: 0;
+    z-index: 9001;
+}
