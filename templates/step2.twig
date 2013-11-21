@@ -1,0 +1,86 @@
+{% extends "layout.twig" %}
+
+{% block title 'Start Discovering' %}
+
+{% block content %}
+
+    {% if code == null %}
+        {{ block('step_1_unfinished') }}
+    {% else %}
+        {{ block('step_2') }}
+    {% endif %}
+
+
+{% endblock %}
+
+{% block step_1_unfinished %}
+    <div class="jumbotron">
+        <h1>Discover EasyBib's API <br /><small>Step 2: Get an access token</small></h1>
+        <p>To get an access token you first have to complete step1.</p>
+        <p>
+            <a class="btn btn-primary btn-lg active center-text"
+               role="button" href="{{ app.url_generator.generate('step1') }}">
+                back to Step 1
+            </a>
+        </p>
+    </div>
+    <div class="page-header"><h2>Step 1: Get an authorization code</h2></div>
+    <ol type="A">
+        {{ block('listing1') }}
+    </ol>
+    <div class="page-header text-muted"><h2>Step 2: Exchange the authorization code for an access token</h2></div>
+    <ol type="A" start="4"  class="text-muted">
+        {{ block('listing2') }}
+    </ol>
+    <p>
+        See you right back - ready to discover the API. First finish <a href="{{ app.url_generator.generate('step1') }}">Step 1</a>.
+    </p>
+{% endblock %}
+
+{% block step_2 %}
+    <div class="jumbotron">
+        <h1>Discover the API <br /><small>Step 2: Get an access token</small></h1>
+        <p>With this access token you can now start making requests to the resource server.</p>
+        <p>
+            <a class="btn btn-primary btn-lg active center-text"
+               role="button" href="{{ app.url_generator.generate('discover') }}">
+                Step 3: Discover
+            </a>
+        </p>
+    </div>
+    <div class="page-header text-muted"><h2>Step 1: Get an authorization code</h2></div>
+    <ol type="A" class="text-muted">
+        {{ block('listing1') }}
+    </ol>
+    <div class="page-header"><h2>Step 2: Exchange the authorization code for an access token</h2></div>
+    <ol type="A" start="4">
+        {{ block('listing2') }}
+    </ol>
+
+    <div class="page-header"><h3>The authorization code</h3></div>
+    <pre>{{ code|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+    <div class="page-header"><h3>The access token</h3></div>
+    <pre>{{ token|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+{% endblock %}
+
+{% block listing1 %}
+    <li>
+        When you click on one of the scope links, your browser gets send to the authorization server.
+    </li>
+    <li>
+        The authorization server checks validity of client credentials and if user is authenticated
+    </li>
+    <li>
+        If you clicked on the <strong>Yes, I Authorize This Request</strong> button the authorization server sends your browser with
+        a query parameter <code>code</code> back to this client application, to step D and E.
+    </li>
+{% endblock %}
+
+{% block listing2 %}
+    <li>
+        Behind the scene this client directly requests to exchange the obtained <code>authorization code</code> for an <code>access token</code> with the authorization server.
+    </li>
+    <li>
+        The authorization server checked the user and the client and if all requirements are met and sends back the <code>authorization code</code> to the client. The client can now request resources from the resource server by presenting the <code>access token</code>.
+    </li>
+{% endblock %}

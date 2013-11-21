@@ -46,12 +46,20 @@ class AppTest extends WebTestCase
         $this->assertContains('discover.css', $client->getResponse()->getContent());
     }
 
-    public function testISeeAHeadline()
+    public function testISeeAHeadlineForStep1()
     {
         $client = $this->createClient();
         $client->request('GET', '/');
 
-        $this->assertContains('Welcome to the EasyBib Demo Client!', $client->getResponse()->getContent());
+        $this->assertContains('Step 1: Get an authorization code', $client->getResponse()->getContent());
+    }
+
+    public function testISeeAHeadlineForStep2()
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/step2');
+
+        $this->assertContains('Step 2: Get an access token', $client->getResponse()->getContent());
     }
 
     public function testTheTheMainPageContainsScopes()
@@ -61,7 +69,6 @@ class AppTest extends WebTestCase
 
         foreach ($this->app['scopes'] as $scope) {
             $this->assertContains($scope['title'], $client->getResponse()->getContent());
-            $this->assertContains($scope['desc'], $client->getResponse()->getContent());
         }
     }
 
@@ -144,7 +151,7 @@ class AppTest extends WebTestCase
         $discoverUrl = $this->app['url_generator']->generate('discover');
 
         $client = $this->createClient();
-        $client->request('GET', $discoverUrl, ['rel' => 'project']);
+        $client->request('GET', $discoverUrl);
 
         $this->assertContains('aaa', $client->getResponse()->getContent());
     }

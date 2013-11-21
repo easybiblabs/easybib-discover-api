@@ -24,7 +24,8 @@ class ClientMock extends Client
     {
         return [
             'resourceData'    => [],
-            'responseMessage' => 'response message'
+            'responseMessage' => 'response message',
+            'url' => 'http://localhost'
         ];
     }
 }

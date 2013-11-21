@@ -1,7 +1,7 @@
 {
   "name": "easybiblabs/easybib-discover-api",
   "description": "Discover EasyBibs API",
-  "license": "MIT",
+  "license": "BSD-2-Clause",
   "authors": [
     {"name": "Anne-Julia Scheuermann", "email": "anne@lagged.biz"}
   ],

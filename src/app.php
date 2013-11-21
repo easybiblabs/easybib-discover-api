@@ -81,28 +81,54 @@ $app->get(
     '/',
     function () use ($app) {
         return $app['twig']->render(
-            'index.twig',
+            'step1.twig',
             [
                 'scopes'   => $app['scopes'],
                 'authUrl'  => $app['oauth.config']['server.auth'],
                 'clientId' => $app['oauth.config']['client.id'],
+            ]
+        );
+    }
+)->bind('step1');
+
+$app->get(
+    '/step2',
+    function () use ($app) {
+
+        return $app['twig']->render(
+            'step2.twig',
+            [
+                'code'     => $app['session']->get('code'),
                 'token'    => $app['session']->get('token'),
             ]
         );
     }
-)->bind('index');
+)
+    ->bind('step2')
+    ->before(
+        function (Request $request, Application $app) {
+            $hasAccessToken = function ($token) {
+                return isset($token['expires_at']);
+            };
+            $hasValidToken = function ($token) {
+                return isset($token['expires_at']) && $token['expires_at'] > time();
+            };
+            $token = $app['session']->get('token');
 
-$app->get(
-    '/readme',
-    function () use ($app) {
-        return $app['twig']->render(
-            'readme.twig',
-            [
-                'readme'   => file_get_contents(__DIR__ . '/../README.md'),
-            ]
-        );
-    }
-)->bind('readme');
+            if ($hasValidToken($token) == true) {
+                return;
+            }
+
+            if ($hasAccessToken($token)) {
+                $app['session']->getFlashBag()->add('warning', 'The access token has expired.');
+            }
+
+            $app['session']->remove('token');
+            $app['session']->remove('code');
+
+            $app['session']->getFlashBag()->add('warning', 'Please get an authorization code first with Step 1.');
+        }
+    );
 
 $app->get(
     '/authorized',
@@ -110,16 +136,29 @@ $app->get(
 
         if (!$code = $app['request']->get('code')) {
             // the user denied the authorization request
+            $app['session']->getFlashBag()->add('error', '');
             return $app['twig']->render('denied.twig');
         }
+
+        $app['session']->getFlashBag()->add(
+            'success',
+            sprintf('Step 1: The authentication code was send back from the server. [%s]', $app->escape($code))
+        );
 
         // request an access_token with the authorization code
         $redirectUri = $app['url_generator']->generate('authorize_redirect', [], true);
         $token = $app['client']->getAccessToken($code, $redirectUri);
 
         $app['session']->set('token', $token);
+        $app['session']->set('code', $code); // this is only for demonstration purpose
 
-        return $app->redirect($app['url_generator']->generate('index'));
+        $app['session']->getFlashBag()->add(
+            'success',
+            'Step 2: The authentication code could be exchanged for access token'
+        );
+
+
+        return $app->redirect($app['url_generator']->generate('step2'));
     }
 )->bind('authorize_redirect');
 
@@ -140,25 +179,51 @@ $app->get(
         return $app['twig']->render(
             'discover.twig',
             [
-                'resourceData'    => $resourceData,
-                'responseMessage' => $resourceResponse['responseMessage'],
-                'token'           => $app['session']->get('token'),
+                'hypermediaResponse' => $resourceData,
+                'responseMessage'    => $resourceResponse['responseMessage'],
+                'url'                => $resourceResponse['url'],
+                'token'              => $app['session']->get('token'),
             ]
         );
     }
 )
-->bind('discover')
-->before(
-    function (Request $request, Application $app) {
-        $hasValidToken = function ($token) {
-            return isset($token['expires_at']) && $token['expires_at'] > time();
-        };
-        if ($hasValidToken($app['session']->get('token')) == false) {
-            $app['session']->remove('token');
-            return $app->redirect($app['url_generator']->generate('index'));
+    ->bind('discover')
+    ->before(
+        function (Request $request, Application $app) {
+            $hasValidToken = function ($token) {
+                return isset($token['expires_at']) && $token['expires_at'] > time();
+            };
+            if ($hasValidToken($app['session']->get('token')) == true) {
+                return;
+            }
+            return $app->redirect($app['url_generator']->generate('reset'));
         }
+    );
+
+$app->get(
+    '/readme',
+    function () use ($app) {
+        return $app['twig']->render(
+            'readme.twig',
+            [
+                'readme'   => file_get_contents(__DIR__ . '/../README.md'),
+            ]
+        );
     }
-);
+)->bind('readme');
+
+$app->get(
+    '/reset',
+    function () use ($app) {
+
+        $app['session']->remove('token');
+        $app['session']->remove('code');
+
+        $app['session']->getFlashBag()->add('warning', 'Please get an authorization code first with Step 1.');
+
+        return $app->redirect($app['url_generator']->generate('step1'));
+    }
+)->bind('reset');
 
 /** Is page reachable */
 $app->get(
@@ -171,8 +236,6 @@ $app->get(
 /** Error handler */
 $app->error(
     function (\Exception $e, $code) use ($app) {
-        throw $e;
-        /*
         return $app['twig']->render(
             (404 == $code) ? '404.twig' : '500.twig',
             [
@@ -180,7 +243,6 @@ $app->error(
                 'message' => $e->getMessage()
             ]
         );
-        */
     }
 );
 
