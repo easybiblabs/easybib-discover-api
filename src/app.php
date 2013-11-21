@@ -115,17 +115,18 @@ $app->get(
             };
             $token = $app['session']->get('token');
 
-            if ($hasValidToken($token) == false) {
-
-                if ($hasAccessToken($token)) {
-                    $app['session']->getFlashBag()->add('warning', 'The access token has expired.');
-                }
-
-                $app['session']->remove('token');
-                $app['session']->remove('code');
-
-                $app['session']->getFlashBag()->add('warning', 'Please get an authorization code first with Step 1.');
+            if ($hasValidToken($token) == true) {
+                return;
             }
+
+            if ($hasAccessToken($token)) {
+                $app['session']->getFlashBag()->add('warning', 'The access token has expired.');
+            }
+
+            $app['session']->remove('token');
+            $app['session']->remove('code');
+
+            $app['session']->getFlashBag()->add('warning', 'Please get an authorization code first with Step 1.');
         }
     );
 
@@ -192,9 +193,10 @@ $app->get(
             $hasValidToken = function ($token) {
                 return isset($token['expires_at']) && $token['expires_at'] > time();
             };
-            if ($hasValidToken($app['session']->get('token')) == false) {
-                return $app->redirect($app['url_generator']->generate('reset'));
+            if ($hasValidToken($app['session']->get('token')) == true) {
+                return;
             }
+            return $app->redirect($app['url_generator']->generate('reset'));
         }
     );
 
@@ -234,8 +236,6 @@ $app->get(
 /** Error handler */
 $app->error(
     function (\Exception $e, $code) use ($app) {
-        throw $e;
-        /*
         return $app['twig']->render(
             (404 == $code) ? '404.twig' : '500.twig',
             [
@@ -243,7 +243,6 @@ $app->error(
                 'message' => $e->getMessage()
             ]
         );
-        */
     }
 );
 
