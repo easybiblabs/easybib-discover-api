@@ -79,7 +79,7 @@ class AppTest extends WebTestCase
 
     /**
      * @expectedException \Exception
-     * @expectedExceptionMessage Configuration file config/oauth.php is missing.
+     * @expectedExceptionMessage Configuration file
      */
     public function testOAuthConfigFileIsMissing()
     {

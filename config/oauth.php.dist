@@ -1,10 +1,10 @@
 <?php
 
 return [
-  'server.auth'     => 'https://data.easybib.com/oauth/authorize',
-  'server.token'    => 'https://data.easybib.com/oauth/token',
-  'entrypoint.data' => 'https://data.easybib.com/projects/',
-  'entrypoint.user' => 'https://data.easybib.com/user/',
-  'client.id'       => '',
-  'client.secret'   => '',
+    'server.auth'     => getenv('OAUTH_URL') . '/oauth/authorize',
+    'server.token'    => getenv('OAUTH_URL') . '/oauth/token',
+    'entrypoint.data' => getenv('OAUTH_URL') . '/projects/',
+    'entrypoint.user' => getenv('OAUTH_URL') . '/user/',
+    'client.id'       => getenv('OAUTH_ID'),
+    'client.secret'   => getenv('OAUTH_SECRET'),
 ];

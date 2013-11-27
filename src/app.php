@@ -34,7 +34,7 @@ $app->register(
 /**
  * Configuration
  */
-$app['appRootPath'] = __DIR__ . '/../';
+$app['appRootPath'] = realpath(__DIR__ . '/../');
 $app['scopes'] = $app->share(
     function () {
         return [
@@ -57,13 +57,26 @@ $app['scopes'] = $app->share(
     }
 );
 
-$app['oauth.config.file'] = $app['appRootPath'] . 'config/oauth.php';
+$app['oauth.config.file'] = $app->share(
+    function () use ($app) {
+        if (file_exists($app['appRootPath'] . 'config/oauth.php')) {
+            return $app['appRootPath'] . '/config/oauth.php';
+        }
+        return $app['appRootPath'] . '/config/oauth.php.dist';
+    }
+);
+
 $app['oauth.config'] = $app->share(
     function () use ($app) {
         if (file_exists($app['oauth.config.file'])) {
             return require $app['oauth.config.file'];
         }
-        throw new \Exception('Configuration file config/oauth.php is missing.');
+        throw new \Exception(
+            sprintf(
+                'Configuration file "%s" is missing.',
+                $app['oauth.config.file']
+            )
+        );
     }
 );
 $app['http.client'] = $app->share(
