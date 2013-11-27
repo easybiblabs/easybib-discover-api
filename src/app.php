@@ -57,7 +57,15 @@ $app['scopes'] = $app->share(
     }
 );
 
-$app['oauth.config.file'] = $app['appRootPath'] . 'config/oauth.php';
+$app['oauth.config.file'] = $app->share(
+    function () use ($app) {
+        if (file_exists($app['appRootPath'] . 'config/oauth.php')) {
+            return $app['appRootPath'] . 'config/oauth.php';
+        }
+        return $app['appRootPath'] . 'config/oauth.php-dist';
+    }
+);
+
 $app['oauth.config'] = $app->share(
     function () use ($app) {
         if (file_exists($app['oauth.config.file'])) {
