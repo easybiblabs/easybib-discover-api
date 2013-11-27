@@ -71,7 +71,12 @@ $app['oauth.config'] = $app->share(
         if (file_exists($app['oauth.config.file'])) {
             return require $app['oauth.config.file'];
         }
-        throw new \Exception('Configuration file config/oauth.php is missing.');
+        throw new \Exception(
+            sprintf(
+                'Configuration file "%s" is missing.',
+                $app['oauth.config.file']
+            )
+        );
     }
 );
 $app['http.client'] = $app->share(
