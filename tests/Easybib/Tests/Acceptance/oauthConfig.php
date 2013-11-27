@@ -6,5 +6,5 @@ return [
     'entrypoint.data' => getenv('OAUTH_URL') . '/projects/',
     'entrypoint.user' => getenv('OAUTH_URL') . '/user/',
     'client.id'       => getenv('OAUTH_ID'),
-    'client.secret'   => getenv('OAUTH_SESCRET'),
+    'client.secret'   => getenv('OAUTH_SECRET'),
 ];
