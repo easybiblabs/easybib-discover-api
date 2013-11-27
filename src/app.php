@@ -34,7 +34,7 @@ $app->register(
 /**
  * Configuration
  */
-$app['appRootPath'] = __DIR__ . '/../';
+$app['appRootPath'] = realpath(__DIR__ . '/../');
 $app['scopes'] = $app->share(
     function () {
         return [
