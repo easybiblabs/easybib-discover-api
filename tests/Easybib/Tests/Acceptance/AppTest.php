@@ -126,6 +126,7 @@ class AppTest extends WebTestCase
         $authorizeRedirectUrl = $this->app['url_generator']->generate('authorize_redirect');
 
         $client = $this->createClient();
+        $client->followRedirects(false);
         $client->request('GET', $authorizeRedirectUrl, ['code'=>'123']);
 
         $this->assertNotEmpty($this->app['session']->get('token'));
@@ -138,6 +139,7 @@ class AppTest extends WebTestCase
         $discoverUrl = $this->app['url_generator']->generate('discover');
 
         $client = $this->createClient();
+        $client->followRedirects(false);
         $client->request('GET', $discoverUrl);
 
         $this->assertContains('Redirecting to /', $client->getResponse()->getContent());
