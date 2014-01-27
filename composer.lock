@@ -770,12 +770,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "05a9ddf4c9fb9795c8fc9cda09bc5f27af11404b"
+                "reference": "57bc5a1fca868f9abd7c5deffd9ac57aea6adfd9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/05a9ddf4c9fb9795c8fc9cda09bc5f27af11404b",
-                "reference": "05a9ddf4c9fb9795c8fc9cda09bc5f27af11404b",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/57bc5a1fca868f9abd7c5deffd9ac57aea6adfd9",
+                "reference": "57bc5a1fca868f9abd7c5deffd9ac57aea6adfd9",
                 "shasum": ""
             },
             "require": {
@@ -800,7 +800,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Official version of pdepend to be handled with Composer",
-            "time": "2014-01-13 16:01:28"
+            "time": "2014-01-24 20:42:53"
         },
         {
             "name": "phpmd/phpmd",
@@ -808,12 +808,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "4c0522596db0c60b6aaea8dfc11b588777ebc8fa"
+                "reference": "61595c1927796de53c0d26d3224b5c1b979c8c17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/4c0522596db0c60b6aaea8dfc11b588777ebc8fa",
-                "reference": "4c0522596db0c60b6aaea8dfc11b588777ebc8fa",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/61595c1927796de53c0d26d3224b5c1b979c8c17",
+                "reference": "61595c1927796de53c0d26d3224b5c1b979c8c17",
                 "shasum": ""
             },
             "require": {
@@ -839,7 +839,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Official version of PHPMD handled with Composer.",
-            "time": "2014-01-13 14:52:33"
+            "time": "2014-01-24 20:49:59"
         },
         {
             "name": "phpunit/php-code-coverage",
