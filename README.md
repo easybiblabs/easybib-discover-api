@@ -22,8 +22,17 @@ You can also try it by going directly to [https://discover.data.easybib.com/](ht
 * Go into project-dir: `cd discover`
 * Run `./composer.phar update` to install dependencies
 * Create config and add your client credentials `cp config/oauth.php.dist config/oauth.php`
+* Set environment variables
 * Run `./phpci` to check that everything works
 * Run `php -S localhost:9000 -t www/` and open the app in your browser: [http://localhost:9000/](http://localhost:9000/)
+
+#### Example oauth.php variables
+
+    putenv('OAUTH_URL_ID=https://id.easybib.com');
+    putenv('OAUTH_URL_DATA=https://data.easybib.com');
+    putenv('OAUTH_ID=local-vagrant-api-id');
+    putenv('OAUTH_SECRET=local-vagrant-api-secret');
+
 
 ### Routes
 
