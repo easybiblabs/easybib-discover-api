@@ -14,7 +14,7 @@ class ClientServiceProvider implements \Silex\ServiceProviderInterface
     {
         $app['client'] = $app->share(
             function () use ($app) {
-                return new Client($app['oauth.config'], $app['http.client']);
+                return new Client($app['oauth.config'], $app['http.client'], $app['logger']);
             }
         );
     }
