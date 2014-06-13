@@ -30,6 +30,15 @@ $app->register(
         ],
     ]
 );
+$app['debug'] = true;
+$app->register(
+    new \Silex\Provider\MonologServiceProvider,
+    [
+        'monolog.name'    => 'discover',
+        'monolog.logfile' => dirname(__DIR__) . '/log/'.date('Y-m-d').'.log',
+        'monolog.level'   => 'debug',
+    ]
+);
 
 /**
  * Configuration

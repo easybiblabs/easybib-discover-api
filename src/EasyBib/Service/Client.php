@@ -1,6 +1,9 @@
 <?php
 namespace EasyBib\Service;
 
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Log;
+
 class Client
 {
     public static $CLASS = __CLASS__;
@@ -10,16 +13,22 @@ class Client
     /** @var \Guzzle\Http\Client */
     private $httpClient;
 
-    public function __construct(array $config, $httpClient)
+    /** @var LoggerInterface $logger */
+    private $logger;
+
+    public function __construct(array $config, $httpClient, $logger = null)
     {
         $this->config = $config;
         $this->httpClient = $httpClient;
+        $this->logger = $logger ? : new Log\NullLogger();
     }
 
     /**
      * Get access token from authorization server
      *
      * @param string $code
+     * @param string $redirectUri
+     *
      * @return array
      */
     public function getAccessToken($code, $redirectUri)
@@ -64,6 +73,9 @@ class Client
         $data = $request->send();
         $responseMessage = ob_get_contents();
         ob_end_clean();
+
+        //$this->logger->debug($data->getBody(true));
+        $this->logger->debug($data->getRawHeaders());
 
         return [
             'resourceData'    => $data->json(),
