@@ -2,6 +2,7 @@
 namespace EasyBib\Service;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Log;
 
 class Client
 {
@@ -19,13 +20,15 @@ class Client
     {
         $this->config = $config;
         $this->httpClient = $httpClient;
-        $this->logger = $logger;
+        $this->logger = $logger ? : new Log\NullLogger();
     }
 
     /**
      * Get access token from authorization server
      *
      * @param string $code
+     * @param string $redirectUri
+     *
      * @return array
      */
     public function getAccessToken($code, $redirectUri)
