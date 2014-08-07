@@ -1,5 +1,17 @@
 <?php
 
+if (file_exists($app['appRootPath'] . '/.deploy_configuration.php')) {
+    $deploy_configuration = require_once($app['appRootPath'] . '/.deploy_configuration.php');
+    return [
+       'server.auth'     => $deploy_configuration['settings']['OAUTH_URL_ID']   . '/oauth/authorize',
+       'server.token'    => $deploy_configuration['settings']['OAUTH_URL_ID']   . '/oauth/token',
+       'entrypoint.data' => $deploy_configuration['settings']['OAUTH_URL_DATA'] . '/projects/',
+       'entrypoint.user' => $deploy_configuration['settings']['OAUTH_URL_DATA'] . '/user/',
+       'client.id'       => $deploy_configuration['settings']['OAUTH_ID'],
+       'client.secret'   => $deploy_configuration['settings']['OAUTH_SECRET'],
+    ];
+}
+
 return [
    'server.auth'     => getenv('OAUTH_URL_ID')    . '/oauth/authorize',
    'server.token'    => getenv('OAUTH_URL_ID')    . '/oauth/token',
