@@ -1,14 +1,14 @@
 <?php
 
 if (file_exists($app['appRootPath'] . '/.deploy_configuration.php')) {
-    $deploy_configuration = require_once($app['appRootPath'] . '/.deploy_configuration.php');
+    $deployConfiguration = require_once($app['appRootPath'] . '/.deploy_configuration.php');
     return [
-       'server.auth'     => $deploy_configuration['settings']['OAUTH_URL_ID']   . '/oauth/authorize',
-       'server.token'    => $deploy_configuration['settings']['OAUTH_URL_ID']   . '/oauth/token',
-       'entrypoint.data' => $deploy_configuration['settings']['OAUTH_URL_DATA'] . '/projects/',
-       'entrypoint.user' => $deploy_configuration['settings']['OAUTH_URL_DATA'] . '/user/',
-       'client.id'       => $deploy_configuration['settings']['OAUTH_ID'],
-       'client.secret'   => $deploy_configuration['settings']['OAUTH_SECRET'],
+       'server.auth'     => $deployConfiguration['settings']['OAUTH_URL_ID']   . '/oauth/authorize',
+       'server.token'    => $deployConfiguration['settings']['OAUTH_URL_ID']   . '/oauth/token',
+       'entrypoint.data' => $deployConfiguration['settings']['OAUTH_URL_DATA'] . '/projects/',
+       'entrypoint.user' => $deployConfiguration['settings']['OAUTH_URL_DATA'] . '/user/',
+       'client.id'       => $deployConfiguration['settings']['OAUTH_ID'],
+       'client.secret'   => $deployConfiguration['settings']['OAUTH_SECRET'],
     ];
 }
 
