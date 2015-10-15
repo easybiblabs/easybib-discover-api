@@ -19,7 +19,8 @@
     "nicl/silex-markdown": "1.1.*",
     "guzzle/silex-provider": "1.0.*@dev",
     "monolog/monolog": "1.6.*",
-    "symfony/monolog-bridge": "2.3.*"
+    "symfony/monolog-bridge": "2.3.*",
+    "easybib/silex-qafoo-provider": "~1.1.0"
   },
   "require-dev": {
     "symfony/browser-kit": "2.3.*",
