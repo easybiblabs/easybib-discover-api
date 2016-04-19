@@ -15,6 +15,10 @@ if (!isset($environment)) {
     }
 }
 
+if ($environment === 'testing') {
+    $deployConfiguration = require dirname(__DIR__) . '/config/testing_deploy_configuration.php';
+}
+
 $app = new Application([
     'app.environment' => $environment,
     'app.root_dir' => dirname(__DIR__),
@@ -63,7 +67,6 @@ $app->register(
 /**
  * Configuration
  */
-$app['appRootPath'] = realpath(__DIR__ . '/../');
 $app['scopes'] = $app->share(
     function () {
         return [
@@ -86,28 +89,16 @@ $app['scopes'] = $app->share(
     }
 );
 
-$app['oauth.config.file'] = $app->share(
-    function () use ($app) {
-        if (file_exists($app['appRootPath'] . '/config/oauth.php')) {
-            return $app['appRootPath'] . '/config/oauth.php';
-        }
-        return $app['appRootPath'] . '/config/oauth.php.dist';
-    }
-);
 
-$app['oauth.config'] = $app->share(
-    function () use ($app) {
-        if (file_exists($app['oauth.config.file'])) {
-            return require $app['oauth.config.file'];
-        }
-        throw new \Exception(
-            sprintf(
-                'Configuration file "%s" is missing.',
-                $app['oauth.config.file']
-            )
-        );
-    }
-);
+$app['oauth.config'] = [
+    'server.auth'     => $deployConfiguration['settings']['OAUTH_URL_ID']   . '/oauth/authorize',
+    'server.token'    => $deployConfiguration['settings']['OAUTH_URL_ID']   . '/oauth/token',
+    'entrypoint.data' => $deployConfiguration['settings']['OAUTH_URL_DATA'] . '/projects/',
+    'entrypoint.user' => $deployConfiguration['settings']['OAUTH_URL_DATA'] . '/user/',
+    'client.id'       => $deployConfiguration['settings']['OAUTH_ID'],
+    'client.secret'   => $deployConfiguration['settings']['OAUTH_SECRET'],
+];
+
 $app['http.client'] = $app->share(
     function () use ($app) {
         return $app['guzzle.client'];

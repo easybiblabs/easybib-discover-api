@@ -72,21 +72,6 @@ class AppTest extends WebTestCase
         }
     }
 
-    public function testAppRootPathIsSet()
-    {
-        $this->assertNotEmpty($this->app['appRootPath']);
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Configuration file
-     */
-    public function testOAuthConfigFileIsMissing()
-    {
-        $this->app['oauth.config.file'] = __DIR__ . '/oauthConfig-notExisting.php';
-        $this->app['oauth.config'];
-    }
-
     public function testAuthorizedRedirectActionExists()
     {
         $authorizeRedirectUrl = $this->app['url_generator']->generate('authorize_redirect');
