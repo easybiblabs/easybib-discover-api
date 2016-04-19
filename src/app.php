@@ -9,7 +9,6 @@ if (is_readable(dirname(__DIR__) . '/.deploy_configuration.php')) {
     $deployConfiguration = require dirname(__DIR__) . '/.deploy_configuration.php';
 }
 if (!isset($environment)) {
-    $environment = 'testing';
     if (isset($deployConfiguration['deployed_stack']['environment'])) {
         $environment = $deployConfiguration['deployed_stack']['environment'];
     }

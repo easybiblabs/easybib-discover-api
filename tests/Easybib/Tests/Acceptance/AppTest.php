@@ -17,7 +17,6 @@ class AppTest extends WebTestCase
         parent::setUp();
         $this->app['session.test'] = true;
         $this->app['session']->remove('token');
-        $this->app['oauth.config.file'] = __DIR__ . '/oauthConfig.php';
     }
 
     public function testAppIsReachable()
@@ -182,6 +181,7 @@ class AppTest extends WebTestCase
      */
     public function createApplication()
     {
-        return require __DIR__ . '/../../../bootstrap.php';
+        $environment = 'testing';
+        return require __DIR__ . '/../../../../src/app.php';
     }
 }
