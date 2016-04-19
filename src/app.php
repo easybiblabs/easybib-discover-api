@@ -35,59 +35,45 @@ if (extension_loaded('tideways')) {
  */
 $app->register(new \Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new \Nicl\Silex\MarkdownServiceProvider());
-$app->register(
-    new \Guzzle\GuzzleServiceProvider(),
-    [
-        'guzzle.base_url' => 'https://data.easybib.com',
-    ]
-);
-$app->register(
-    new \Silex\Provider\TwigServiceProvider(),
-    [
-        'twig.path' => array(__DIR__ . '/../templates'),
-    ]
-);
-$app->register(
-    new \Silex\Provider\SessionServiceProvider(),
-    [
-        'session.storage.options' => [
-            'cookie_lifetime' => 5000,
-        ],
-    ]
-);
-$app->register(
-    new \Silex\Provider\MonologServiceProvider,
-    [
-        'monolog.name'    => 'discover',
-        'monolog.logfile' => dirname(__DIR__) . '/log/'.date('Y-m-d').'.log',
-        'monolog.level'   => 'debug',
-    ]
-);
+$app->register(new \Guzzle\GuzzleServiceProvider(), [
+    'guzzle.base_url' => $deployConfiguration['settings']['OAUTH_URL_DATA'],
+]);
+$app->register(new \Silex\Provider\TwigServiceProvider(), [
+    'twig.path' => [$app['app.root_dir'] . '/templates'],
+]);
+$app->register(new \Silex\Provider\SessionServiceProvider(), [
+    'session.storage.options' => [
+        'cookie_lifetime' => 5000,
+    ],
+]);
+$app->register(new \Silex\Provider\MonologServiceProvider, [
+    'monolog.name'    => 'discover',
+    'monolog.logfile' => dirname(__DIR__) . '/log/'.date('Y-m-d').'.log',
+    'monolog.level'   => 'debug',
+]);
 
 /**
  * Configuration
  */
-$app['scopes'] = $app->share(
-    function () {
-        return [
-            [
-                'title' => 'Grant user scope',
-                'desc'  => 'reading and writing users profile data',
-                'scope' => 'USER_READ_WRITE',
-            ],
-            [
-                'title' => 'Grant data scope',
-                'desc'  => 'reading and writing users projects, citations, comments',
-                'scope' => 'DATA_READ_WRITE',
-            ],
-            [
-                'title' => 'Grant user and data scope',
-                'desc'  => 'to users profile data, projects, citations and comments',
-                'scope' => 'USER_READ_WRITE%20DATA_READ_WRITE',
-            ],
-        ];
-    }
-);
+$app['scopes'] = $app->share(function () {
+    return [
+        [
+            'title' => 'Grant user scope',
+            'desc'  => 'reading and writing users profile data',
+            'scope' => 'USER_READ_WRITE',
+        ],
+        [
+            'title' => 'Grant data scope',
+            'desc'  => 'reading and writing users projects, citations, comments',
+            'scope' => 'DATA_READ_WRITE',
+        ],
+        [
+            'title' => 'Grant user and data scope',
+            'desc'  => 'to users profile data, projects, citations and comments',
+            'scope' => 'USER_READ_WRITE%20DATA_READ_WRITE',
+        ],
+    ];
+});
 
 
 $app['oauth.config'] = [
@@ -99,11 +85,9 @@ $app['oauth.config'] = [
     'client.secret'   => $deployConfiguration['settings']['OAUTH_SECRET'],
 ];
 
-$app['http.client'] = $app->share(
-    function () use ($app) {
-        return $app['guzzle.client'];
-    }
-);
+$app['http.client'] = $app->share(function (Application $app){
+    return $app['guzzle.client'];
+});
 
 $app->register(new \EasyBib\Service\ClientServiceProvider());
 
