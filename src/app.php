@@ -3,7 +3,23 @@
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-$app = new Application();
+
+$deployConfiguration = [];
+if (is_readable(dirname(__DIR__) . '/.deploy_configuration.php')) {
+    $deployConfiguration = require dirname(__DIR__) . '/.deploy_configuration.php';
+}
+if (!isset($environment)) {
+    $environment = 'testing';
+    if (isset($deployConfiguration['deployed_stack']['environment'])) {
+        $environment = $deployConfiguration['deployed_stack']['environment'];
+    }
+}
+
+$app = new Application([
+    'app.environment' => $environment,
+    'app.root_dir' => dirname(__DIR__),
+    'debug' => in_array($environment, ['vagrant', 'testing']),
+]);
 
 /**
  * Register service provider
@@ -30,7 +46,6 @@ $app->register(
         ],
     ]
 );
-$app['debug'] = true;
 $app->register(
     new \Silex\Provider\MonologServiceProvider,
     [
