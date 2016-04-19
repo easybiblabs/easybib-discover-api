@@ -21,6 +21,11 @@ $app = new Application([
     'debug' => in_array($environment, ['vagrant', 'testing']),
 ]);
 
+if (extension_loaded('tideways')) {
+    $app['qafoo.profiler.key'] = $deployConfiguration['settings']['QAFOO_PROFILER_KEY'];
+    $app->register(new EasyBib\Silex\Provider\QafooProfilerServiceProvider());
+}
+
 /**
  * Register service provider
  */

@@ -3,11 +3,6 @@
 if (file_exists($app['appRootPath'] . '/.deploy_configuration.php')) {
     $deployConfiguration = require_once($app['appRootPath'] . '/.deploy_configuration.php');
 
-    if (extension_loaded('tideways')) {
-        $app['qafoo.profiler.key'] = $deployConfiguration['settings']['QAFOO_PROFILER_KEY'];
-        $app->register(new EasyBib\Silex\Provider\QafooProfilerServiceProvider());
-    }
-
     return [
        'server.auth'     => $deployConfiguration['settings']['OAUTH_URL_ID']   . '/oauth/authorize',
        'server.token'    => $deployConfiguration['settings']['OAUTH_URL_ID']   . '/oauth/token',
