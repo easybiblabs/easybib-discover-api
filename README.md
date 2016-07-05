@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/easybiblabs/easybib-discover-api.png?branch=master)](https://travis-ci.org/easybiblabs/easybib-discover-api)
 
-**"easybib-discover-api"** walks you through the setup of an OAuth2 client to request data from EasyBib's API. This client is opensource under BSD 2-Clause license and can be setup by following the description below.
+**"easybib-discover-api"** walks you through the setup of an OAuth2 client to request data from EasyBib's API. This client is opensource under Apache 2 license and can be setup by following the description below.
 
 You can also try it by going directly to [https://discover.data.easybib.com/](https://discover.data.easybib.com/) or, if you have not already started [creating an EasyBib API client here](https://data.easybib.com/)
 
