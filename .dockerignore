@@ -1,0 +1,4 @@
+vendor
+config/oauth.php
+log/*
+/.deploy_configuration*

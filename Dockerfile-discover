@@ -1,0 +1,24 @@
+FROM cheggwpt/php7-nginx-extras:edge
+MAINTAINER jgilley@chegg.com
+
+# grab the users token from exports
+ARG GITHUB_TOKEN
+
+# set the working directory
+WORKDIR /webroot
+
+# Copy over the project
+COPY . ./
+
+# set up the boot config script
+RUN mkdir -p /docker-init.d && \
+    cp /webroot/post_boot.sh /docker-init.d/ && \
+    chmod a+x /docker-init.d/*.sh
+
+# set the github auth key for reasons
+# run the install
+#RUN ./composer.phar config --global github-oauth.github.com ${GITHUB_TOKEN} && \
+#	./composer.phar install --dev --prefer-source
+RUN ./composer.phar install --dev --prefer-source
+
+RUN ln -s www web
