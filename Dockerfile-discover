@@ -1,4 +1,4 @@
-FROM cheggwpt/php7-nginx-extras:edge
+FROM cheggwpt/php7-nginx:1.1.4
 MAINTAINER jgilley@chegg.com
 
 # grab the users token from exports
@@ -13,12 +13,13 @@ COPY . ./
 # set up the boot config script
 RUN mkdir -p /docker-init.d && \
     cp /webroot/post_boot.sh /docker-init.d/ && \
-    chmod a+x /docker-init.d/*.sh
+    chmod a+x /docker-init.d/*.sh && \
+    sed -i -e "s/root \/webroot;/root \/webroot\/www;/g" /etc/nginx/sites-enabled/default.conf
+
 
 # set the github auth key for reasons
 # run the install
-#RUN ./composer.phar config --global github-oauth.github.com ${GITHUB_TOKEN} && \
+# RUN ./composer.phar config --global github-oauth.github.com ${GITHUB_TOKEN} && \
 #	./composer.phar install --dev --prefer-source
-RUN ./composer.phar install --dev --prefer-source
-
-RUN ln -s www web
+# RUN echo "Compile easybib-discover-api" && \
+#	./composer.phar install --dev --prefer-source
