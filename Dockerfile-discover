@@ -19,7 +19,6 @@ RUN mkdir -p /docker-init.d && \
 
 # set the github auth key for reasons
 # run the install
-# RUN ./composer.phar config --global github-oauth.github.com ${GITHUB_TOKEN} && \
-#	./composer.phar install --dev --prefer-source
-# RUN echo "Compile easybib-discover-api" && \
-#	./composer.phar install --dev --prefer-source
+RUN echo "Compile easybib-discover-api" && \
+	./composer.phar install --dev --prefer-source
+
