@@ -1,0 +1,24 @@
+FROM cheggwpt/php7-nginx:1.1.4
+MAINTAINER jgilley@chegg.com
+
+# Define github token from export
+ARG GITHUB_TOKEN
+
+# set the working directory
+WORKDIR /webroot
+
+# Copy over the project
+COPY . ./
+
+# Setup the post-boot script (mkdir, copy, make executable)
+# Copy the nginx config to sites-enabled/default.conf
+RUN mkdir -p /docker-init.d && \
+    cp /webroot/docker/post_boot.sh /docker-init.d/ && \
+    chmod a+x /docker-init.d/*.sh && \
+    cp /webroot/docker/nginx.conf /etc/nginx/sites-enabled/default.conf
+
+
+# Run the composer install
+# This is done on the build system so that the container is ready to boot with no extra steps required.
+RUN echo "Compile easybib-discover-api" && \
+	./composer.phar install
