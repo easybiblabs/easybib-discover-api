@@ -1,6 +1,8 @@
 <?php
 
-    // for easybib-oauth
+    // POST BOOT Build Config for:
+    // easybib-discover-api
+
     function my_getenv($envvar, $default = false) {
         $data = trim(getenv($envvar));
         if(is_string($data) && $data!=='') return $data;
@@ -70,8 +72,8 @@
 
     file_put_contents('/webroot/.deploy_configuration.php', $php_file);
 
-    print_r($php_file);
+    $environment = my_getenv('APP_ENVIRONMENT','DEVELOPMENT');
+    if($environment == 'DEVELOPMENT') {
+        print_r($php_file);
+    }
 
-    /*
-    curl http://localhost:4569/ -d "Action=ListAllMyBuckets"
-    */

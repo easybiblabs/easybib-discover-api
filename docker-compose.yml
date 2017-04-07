@@ -1,0 +1,14 @@
+version: "2"
+services:
+    discover:
+        build:
+            dockerfile: ./docker/Dockerfile-discover
+            context: .
+        environment:
+            - APP_FUNCTION=DISCOVER
+            - APP_ENVIRONMENT=DEVELOPMENT
+        labels:
+            - convox.port.443.protocol=https
+        ports:
+            - 80:80
+            - 443:80

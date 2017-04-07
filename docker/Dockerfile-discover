@@ -17,8 +17,15 @@ RUN mkdir -p /docker-init.d && \
     chmod a+x /docker-init.d/*.sh && \
     cp /webroot/docker/nginx.conf /etc/nginx/sites-enabled/default.conf
 
-
 # Run the composer install
-# This is done on the build system so that the container is ready to boot with no extra steps required.
+# There is an echo here because doing a convox start/build/deploy there
+#  is no indicator what dockerfile is currently being built
+# This is done on the build system so that the container is ready to
+#  boot with no extra steps required.
 RUN echo "Compile easybib-discover-api" && \
 	./composer.phar install
+
+# Last step, make the log directory this app wants to use, should this be
+#  an ENV var?  it appears hard coded in the app
+RUN mkdir -p /webroot/log && \
+	chmod a+rw /webroot/log
