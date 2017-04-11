@@ -33,9 +33,9 @@ function install_convox {
 
 ###
 # Get the build target from passed argument
-# Default to staging just in case
+# Default to playground just in case
 ###
-DEPLOY_TARGET=${1:-staging}
+DEPLOY_TARGET=${1:-playground}
 
 ###
 # Determine our deployment target
