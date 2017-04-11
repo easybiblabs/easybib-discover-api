@@ -17,12 +17,12 @@ script:
 notifications:
   email:
     on_success: never
-  hipchat:
-    rooms:
-      secure: WwFdxXzbljYaFeKBr2JQ6fmS3/0QiOn6U/+HPpVpvaMBQws5Fxpxh4YeU7K1vXGLGbr2VGTywSk5YBAOA3tnf7orzuMicP4IsU4X1Q5rbz6kTj1qIgiGoJQ1rHDWMIwVnYiiy7IPN/QRtHFTUqFdL+gVZHoPHHiveoaADn2y1+0=
-    template:
-      - 'This is a test %{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
-    format: html
+#  hipchat:
+#    rooms:
+#      secure: WwFdxXzbljYaFeKBr2JQ6fmS3/0QiOn6U/+HPpVpvaMBQws5Fxpxh4YeU7K1vXGLGbr2VGTywSk5YBAOA3tnf7orzuMicP4IsU4X1Q5rbz6kTj1qIgiGoJQ1rHDWMIwVnYiiy7IPN/QRtHFTUqFdL+gVZHoPHHiveoaADn2y1+0=
+#    template:
+#      - 'This is a test %{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
+#    format: html
 
 deploy:
   # deploy new pushes to branch master to the staging environment
