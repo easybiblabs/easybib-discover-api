@@ -3,11 +3,7 @@ language: php
 matrix:
   include:
     - php: 5.6
-      env: MATRIX_JOB=php-test-56
     - php: 7.0
-      env: MATRIX_JOB=php-test-7
-    - php: 7.0
-      env: MATRIX_JOB=deploy
 
 before_script:
   - ./composer.phar install --dev --prefer-source --no-interaction
@@ -34,11 +30,9 @@ deploy:
     script: scripts/deploy.sh staging
     on:
       branch: master
-      condition: $MATRIX_JOB = deploy
   # deploy new tagged branches to production
   - provider: script
     script: scripts/deploy.sh production
     on:
       tags: true
       all_branches: true
-      condition: $MATRIX_JOB = deploy
