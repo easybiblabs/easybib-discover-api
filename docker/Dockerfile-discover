@@ -1,0 +1,23 @@
+FROM cheggwpt/php7-nginx:1.1.4
+MAINTAINER jgilley@chegg.com
+
+# Define github token from export
+ARG GITHUB_TOKEN
+
+# set the working directory
+WORKDIR /webroot
+
+# Copy over the project
+COPY . ./
+
+# Setup the post-boot script (mkdir, copy, make executable)
+# Copy the nginx config to sites-enabled/default.conf
+RUN mkdir -p /docker-init.d && \
+    cp /webroot/docker/post_boot.sh /docker-init.d/ && \
+    chmod a+x /docker-init.d/*.sh && \
+    cp /webroot/docker/nginx.conf /etc/nginx/sites-enabled/default.conf
+
+# Last step, make the log directory this app wants to use, should this be
+#  an ENV var?  it appears hard coded in the app
+RUN mkdir -p /webroot/log && \
+	chmod a+rw /webroot/log
