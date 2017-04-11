@@ -1,5 +1,3 @@
 .deploy_configuration.*
-vendor
-cache
 doc
 log
