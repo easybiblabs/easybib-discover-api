@@ -70,11 +70,11 @@ install_convox
 cd $TRAVIS_BUILD_DIR
 if [ ${DEPLOY_TARGET} == "production" ] ; then
 	./composer.phar validate
-	./composer.phar install --optimize-autoloader --no-dev --ignore-platform-reqs
+	./composer.phar install --optimize-autoloader --no-dev --ignore-platform-reqs --no-interaction
 	./composer.phar dumpautoload
 elif [ ${DEPLOY_TARGET} == "staging" ] ; then
 	./composer.phar validate
-	./composer.phar install --prefer-dist --ignore-platform-reqs
+	./composer.phar install --prefer-dist --ignore-platform-reqs --no-interaction
 	./composer.phar dumpautoload
 else
 	# No matching target found, so error/exit
