@@ -3,96 +3,90 @@
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-$app = new Application();
+
+$deployConfiguration = [];
+if (is_readable(dirname(__DIR__) . '/.deploy_configuration.php')) {
+    $deployConfiguration = require dirname(__DIR__) . '/.deploy_configuration.php';
+}
+if (!isset($environment)) {
+    if (isset($deployConfiguration['deployed_stack']['environment'])) {
+        $environment = $deployConfiguration['deployed_stack']['environment'];
+    }
+}
+
+if ($environment === 'testing') {
+    $deployConfiguration = require dirname(__DIR__) . '/config/testing_deploy_configuration.php';
+}
+
+$app = new Application([
+    'app.environment' => $environment,
+    'app.root_dir' => dirname(__DIR__),
+    'debug' => in_array($environment, ['vagrant', 'testing']),
+]);
+
+if (extension_loaded('tideways')) {
+    $app['qafoo.profiler.key'] = $deployConfiguration['settings']['QAFOO_PROFILER_KEY'];
+    $app->register(new EasyBib\Silex\Provider\QafooProfilerServiceProvider());
+}
 
 /**
  * Register service provider
  */
 $app->register(new \Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new \Nicl\Silex\MarkdownServiceProvider());
-$app->register(
-    new \Guzzle\GuzzleServiceProvider(),
-    [
-        'guzzle.base_url' => 'https://data.easybib.com',
-    ]
-);
-$app->register(
-    new \Silex\Provider\TwigServiceProvider(),
-    [
-        'twig.path' => array(__DIR__ . '/../templates'),
-    ]
-);
-$app->register(
-    new \Silex\Provider\SessionServiceProvider(),
-    [
-        'session.storage.options' => [
-            'cookie_lifetime' => 5000,
-        ],
-    ]
-);
-$app['debug'] = true;
-$app->register(
-    new \Silex\Provider\MonologServiceProvider,
-    [
-        'monolog.name'    => 'discover',
-        'monolog.logfile' => dirname(__DIR__) . '/log/'.date('Y-m-d').'.log',
-        'monolog.level'   => 'debug',
-    ]
-);
+$app->register(new \Guzzle\GuzzleServiceProvider(), [
+    'guzzle.base_url' => $deployConfiguration['settings']['OAUTH_URL_DATA'],
+]);
+$app->register(new \Silex\Provider\TwigServiceProvider(), [
+    'twig.path' => [$app['app.root_dir'] . '/templates'],
+]);
+$app->register(new \Silex\Provider\SessionServiceProvider(), [
+    'session.storage.options' => [
+        'cookie_lifetime' => 5000,
+    ],
+]);
+$app->register(new \Silex\Provider\MonologServiceProvider, [
+    'monolog.name'    => 'discover',
+    'monolog.logfile' => dirname(__DIR__) . '/log/'.date('Y-m-d').'.log',
+    'monolog.level'   => 'debug',
+]);
 
 /**
  * Configuration
  */
-$app['appRootPath'] = realpath(__DIR__ . '/../');
-$app['scopes'] = $app->share(
-    function () {
-        return [
-            [
-                'title' => 'Grant user scope',
-                'desc'  => 'reading and writing users profile data',
-                'scope' => 'USER_READ_WRITE',
-            ],
-            [
-                'title' => 'Grant data scope',
-                'desc'  => 'reading and writing users projects, citations, comments',
-                'scope' => 'DATA_READ_WRITE',
-            ],
-            [
-                'title' => 'Grant user and data scope',
-                'desc'  => 'to users profile data, projects, citations and comments',
-                'scope' => 'USER_READ_WRITE%20DATA_READ_WRITE',
-            ],
-        ];
-    }
-);
+$app['scopes'] = $app->share(function () {
+    return [
+        [
+            'title' => 'Grant user scope',
+            'desc'  => 'reading and writing users profile data',
+            'scope' => 'USER_READ_WRITE',
+        ],
+        [
+            'title' => 'Grant data scope',
+            'desc'  => 'reading and writing users projects, citations, comments',
+            'scope' => 'DATA_READ_WRITE',
+        ],
+        [
+            'title' => 'Grant user and data scope',
+            'desc'  => 'to users profile data, projects, citations and comments',
+            'scope' => 'USER_READ_WRITE%20DATA_READ_WRITE',
+        ],
+    ];
+});
 
-$app['oauth.config.file'] = $app->share(
-    function () use ($app) {
-        if (file_exists($app['appRootPath'] . '/config/oauth.php')) {
-            return $app['appRootPath'] . '/config/oauth.php';
-        }
-        return $app['appRootPath'] . '/config/oauth.php.dist';
-    }
-);
 
-$app['oauth.config'] = $app->share(
-    function () use ($app) {
-        if (file_exists($app['oauth.config.file'])) {
-            return require $app['oauth.config.file'];
-        }
-        throw new \Exception(
-            sprintf(
-                'Configuration file "%s" is missing.',
-                $app['oauth.config.file']
-            )
-        );
-    }
-);
-$app['http.client'] = $app->share(
-    function () use ($app) {
-        return $app['guzzle.client'];
-    }
-);
+$app['oauth.config'] = [
+    'server.auth'     => $deployConfiguration['settings']['OAUTH_URL_ID']   . '/oauth/authorize',
+    'server.token'    => $deployConfiguration['settings']['OAUTH_URL_ID']   . '/oauth/token',
+    'entrypoint.data' => $deployConfiguration['settings']['OAUTH_URL_DATA'] . '/projects/',
+    'entrypoint.user' => $deployConfiguration['settings']['OAUTH_URL_DATA'] . '/user/',
+    'client.id'       => $deployConfiguration['settings']['OAUTH_ID'],
+    'client.secret'   => $deployConfiguration['settings']['OAUTH_SECRET'],
+];
+
+$app['http.client'] = $app->share(function (Application $app){
+    return $app['guzzle.client'];
+});
 
 $app->register(new \EasyBib\Service\ClientServiceProvider());
 

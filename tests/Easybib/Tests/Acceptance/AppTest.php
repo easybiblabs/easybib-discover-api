@@ -17,7 +17,6 @@ class AppTest extends WebTestCase
         parent::setUp();
         $this->app['session.test'] = true;
         $this->app['session']->remove('token');
-        $this->app['oauth.config.file'] = __DIR__ . '/oauthConfig.php';
     }
 
     public function testAppIsReachable()
@@ -70,21 +69,6 @@ class AppTest extends WebTestCase
         foreach ($this->app['scopes'] as $scope) {
             $this->assertContains($scope['title'], $client->getResponse()->getContent());
         }
-    }
-
-    public function testAppRootPathIsSet()
-    {
-        $this->assertNotEmpty($this->app['appRootPath']);
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Configuration file
-     */
-    public function testOAuthConfigFileIsMissing()
-    {
-        $this->app['oauth.config.file'] = __DIR__ . '/oauthConfig-notExisting.php';
-        $this->app['oauth.config'];
     }
 
     public function testAuthorizedRedirectActionExists()
@@ -197,6 +181,7 @@ class AppTest extends WebTestCase
      */
     public function createApplication()
     {
-        return require __DIR__ . '/../../../bootstrap.php';
+        $environment = 'testing';
+        return require __DIR__ . '/../../../../src/app.php';
     }
 }
