@@ -1,38 +1,43 @@
 language: php
 
 php:
- - 5.6
+- 5.6
 
 sudo: false
 
 before_script:
-  - ./composer.phar install --dev --prefer-source --no-interaction
+- "./composer.phar install --dev --prefer-source --no-interaction"
 
 script:
-  - ./vendor/bin/phpcs --standard=psr2 ./src
-  - ./vendor/bin/phpmd src/ text codesize,controversial,design,naming,unusedcode
-  - ./vendor/bin/phpunit
+- "./vendor/bin/phpcs --standard=psr2 ./src"
+- "./vendor/bin/phpmd src/ text codesize,controversial,design,naming,unusedcode"
+- "./vendor/bin/phpunit"
 
 # travis should only notify us if the build fails
 notifications:
   email:
     on_success: never
-#  hipchat:
-#    rooms:
-#      secure: WwFdxXzbljYaFeKBr2JQ6fmS3/0QiOn6U/+HPpVpvaMBQws5Fxpxh4YeU7K1vXGLGbr2VGTywSk5YBAOA3tnf7orzuMicP4IsU4X1Q5rbz6kTj1qIgiGoJQ1rHDWMIwVnYiiy7IPN/QRtHFTUqFdL+gVZHoPHHiveoaADn2y1+0=
-#    template:
-#      - 'This is a test %{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
-#    format: html
+
+env:
+  global:
+  - secure: V7P/r9fXv4TLEgj6iLZHdXehVJIhWc8RdOidGNkyY12sDsUYY9by20yjM4YVLnB/nLfpQmf4Lv1DAUvs6ZIc/j55tSi8/mjNPvpYNb/jzSvwzOuDQb6WIAFopiO+6tiyeGKvQs26KQuQwp4u1TsaO/f6+1TGK2hJaZ8nZ/AFN8I=
+  - secure: ldqTMP/f0Ye5wEhta3DzwcSBhOTncf5rVgrDp9ArZva5c2DtCsdGki9X7tC9MTVki1uAffavCXvoeXA/fPYM5+a6F1NO6cvwykTkyotDLDhdKHdrgDw3P/soR+1JZfBMDyKmFMDfh7+oFqDolloYPOyp5pVDkj2s1emZJyIYpbU=
+
+branches:
+  only:
+  - master
+  - /^v\d+$/
 
 deploy:
-  # deploy new pushes to branch master to the staging environment
-  - provider: script
-    script: scripts/deploy.sh staging
-    on:
-      branch: master
-  # deploy new tagged branches to production
-  - provider: script
-    script: scripts/deploy.sh production
-    on:
-      tags: true
-      all_branches: true
+# playground
+- provider: opsworks
+  app-id: dc20bc97-ea19-48d1-ae1f-fab9a3213828
+  on:
+    branch: master
+    repo: easybiblabs/easybib-discover
+# production
+- provider: opsworks
+  app-id: dc2cd382-d891-41b1-aac7-3bf57bd81441
+  on:
+    tags: true
+    repo: easybiblabs/easybib-discover
