@@ -34,10 +34,10 @@ deploy:
   app-id: dc20bc97-ea19-48d1-ae1f-fab9a3213828
   on:
     branch: master
-    repo: easybiblabs/easybib-discover
+    repo: easybiblabs/easybib-discover-api
 # production
 - provider: opsworks
   app-id: dc2cd382-d891-41b1-aac7-3bf57bd81441
   on:
     tags: true
-    repo: easybiblabs/easybib-discover
+    repo: easybiblabs/easybib-discover-api
