@@ -27,6 +27,7 @@ branches:
   only:
   - master
   - /^v\d+$/
+  - /^\d+.\d+.\d+$/
 
 deploy:
 # playground
