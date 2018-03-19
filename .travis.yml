@@ -30,6 +30,17 @@ branches:
   - /^\d+.\d+.\d+$/
 
 deploy:
+# deploy new pushes to branch master to the staging environment
+#- provider: script
+#  script: .travis/deploy.sh staging
+#  on:
+#    branch: master
+# deploy new tagged branches to production
+#- provider: script
+#  script: .travis/deploy.sh production
+#  on:
+#    tags: true
+#    all_branches: true
 # playground
 - provider: opsworks
   app-id: dc20bc97-ea19-48d1-ae1f-fab9a3213828
