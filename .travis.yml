@@ -47,9 +47,13 @@ deploy:
   on:
     branch: master
     repo: easybiblabs/easybib-discover-api
+  wait-until-deployed: true
+  update-app-on-success: true
 # production
 - provider: opsworks
   app-id: dc2cd382-d891-41b1-aac7-3bf57bd81441
   on:
     tags: true
     repo: easybiblabs/easybib-discover-api
+  wait-until-deployed: true
+  update-app-on-success: true
